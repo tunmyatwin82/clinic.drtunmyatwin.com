@@ -1,0 +1,22 @@
+services:
+  clinic-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: clinic-app
+    restart: always
+    environment:
+      - DB_HOST=138.2.67.33
+      - DB_PORT=5432
+      - DB_NAME=nocodb
+      - DB_USER=admin
+      - DB_PASSWORD=Tmw@3171982
+      - NEXT_PUBLIC_APP_URL=https://clinic.drtunmyatwin.com
+    ports:
+      - "3001:3000"
+    networks:
+      - ebook-net
+
+networks:
+  ebook-net:
+    external: true
