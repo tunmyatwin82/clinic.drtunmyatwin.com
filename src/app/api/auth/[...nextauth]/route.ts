@@ -32,7 +32,7 @@ const handler = NextAuth({
                 }
 
                 // In a real application, you should verify the password hash
-                if (credentials.password !== "demo123") {
+                if (credentials.password !== user.password_hash) {
                     return null
                 }
 
