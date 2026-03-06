@@ -24,8 +24,9 @@ CREATE TABLE IF NOT EXISTS clinic.users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create index for faster email lookups
+-- Create indexes for faster lookups
 CREATE INDEX IF NOT EXISTS idx_clinic_users_email ON clinic.users(email);
+CREATE INDEX IF NOT EXISTS idx_clinic_users_phone ON clinic.users(phone);
 
 -- =============================================
 -- PATIENTS TABLE
