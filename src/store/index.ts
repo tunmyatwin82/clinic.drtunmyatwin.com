@@ -127,9 +127,9 @@ export const useAppStore = create<AppState>()(
           return true;
         }
 
-        // Then check database via API
+        // Then check database via new login endpoint
         try {
-          const response = await fetch('/api/auth/[...nextauth]', {
+          const loginResponse = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -140,14 +140,23 @@ export const useAppStore = create<AppState>()(
             }),
           });
 
-          if (response.ok) {
-            const data = await response.json();
-            if (data.success && data.user) {
+          if (loginResponse.ok) {
+            const loginData = await loginResponse.json();
+            if (loginData.success && loginData.user) {
+              const { user } = loginData;
+
               // Add user to local store
               const userToAdd = {
-                ...data.user,
-                password,
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                phone: user.phone,
+                role: user.role,
+                password: password,
+                createdAt: new Date(),
+                updatedAt: new Date(),
               };
+
               set((state) => ({
                 users: [...state.users, userToAdd],
                 currentUser: userToAdd,

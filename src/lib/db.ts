@@ -34,6 +34,7 @@ export interface User {
     date_of_birth?: Date;
     address?: string;
     avatar_url?: string;
+    password_hash?: string;
     created_at: Date;
     updated_at: Date;
 }

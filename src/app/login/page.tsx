@@ -42,37 +42,16 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // Try to login using API
-      const response = await fetch('/api/auth/[...nextauth]', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          emailOrPhone: data.emailOrPhone,
-          password: data.password,
-        }),
-      });
-
-      if (response.ok) {
-        router.push('/dashboard');
-      } else {
-        // Fallback to local store login
-        const success = await login(data.emailOrPhone, data.password);
-        if (success) {
-          router.push('/dashboard');
-        } else {
-          setError('ဖုန်နံပါတ်သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်');
-        }
-      }
-    } catch (error) {
-      // Fallback to local store login
+      // Use the login function from the store which now uses /api/users
       const success = await login(data.emailOrPhone, data.password);
       if (success) {
         router.push('/dashboard');
       } else {
         setError('ဖုန်နံပါတ်သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်');
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Login failed');
     }
 
     setIsLoading(false);
