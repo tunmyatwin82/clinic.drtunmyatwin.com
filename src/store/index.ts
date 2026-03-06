@@ -47,7 +47,7 @@ const defaultDoctors: Doctor[] = [
     id: 'dr-1',
     email: 'dr.tunmyatwin@gmail.com',
     name: 'Dr. Tun Myat Win',
-    phone: '+95 9 123 456 789',
+    phone: '0942068582',
     role: 'doctor',
     specialization: 'Male Reproductive Health & Neurology',
     licenseNumber: 'MM123456',
@@ -95,8 +95,8 @@ export const useAppStore = create<AppState>()(
 
       getUser: (id) => get().users.find((u) => u.id === id),
 
-      login: async (email, password) => {
-        const user = get().users.find((u) => u.email === email);
+      login: async (emailOrPhone, password) => {
+        const user = get().users.find((u) => u.email === emailOrPhone || u.phone === emailOrPhone);
         if (user && password === 'demo123') {
           set({ currentUser: user, isAuthenticated: true });
           return true;

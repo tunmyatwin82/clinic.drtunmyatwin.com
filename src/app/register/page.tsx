@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const registerSchema = z.object({
   name: z.string().min(2, 'အမည်သည် အနည်းဆုံး ၂ လုံးရှိရပါမည်'),
-  email: z.string().email('သင့်အီးမေးလ်လိပ်စာထည့်ပါ'),
+  email: z.string().email('သင့်အီးမေးလ်လိပ်စာထည့်ပါ').optional().or(z.literal('')),
   phone: z.string().min(9, 'ဖုန်နံပါတ်ထည့်ပါ'),
   password: z.string().min(6, 'စကားဝှက်သည် အနည်းဆုံး ၆ လုံးရှိရပါမည်'),
   confirmPassword: z.string(),

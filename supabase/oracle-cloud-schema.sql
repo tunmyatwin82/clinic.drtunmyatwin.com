@@ -11,7 +11,7 @@ SET search_path TO clinic;
 -- =============================================
 CREATE TABLE IF NOT EXISTS clinic.users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE,
   name TEXT NOT NULL,
   phone TEXT NOT NULL,
   role TEXT NOT NULL DEFAULT 'patient' CHECK (role IN ('patient', 'doctor', 'admin')),

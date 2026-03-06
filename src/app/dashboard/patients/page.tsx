@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { 
-  Users, 
-  Search, 
+import {
+  Users,
+  Search,
   Filter,
   Mail,
   Phone,
@@ -51,9 +51,9 @@ export default function PatientsPage() {
       }
       return acc;
     }, [] as (Patient & { appointmentCount: number; lastVisit?: Date })[])
-    .filter(patient => 
+    .filter(patient =>
       patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (patient.email && patient.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
       patient.phone.includes(searchTerm)
     );
 

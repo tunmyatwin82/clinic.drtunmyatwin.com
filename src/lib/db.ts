@@ -26,7 +26,7 @@ pool.on('error', (err) => {
 // Database types
 export interface User {
     id: string;
-    email: string;
+    email?: string;
     name: string;
     phone: string;
     role: 'patient' | 'doctor' | 'admin';
@@ -186,12 +186,19 @@ export const db = {
             );
         },
 
+        async getByPhone(phone: string): Promise<User | null> {
+            return queryOne<User>(
+                'SELECT * FROM clinic.users WHERE phone = $1',
+                [phone]
+            );
+        },
+
         async create(user: Omit<User, 'id' | 'created_at' | 'updated_at'> & { password_hash: string }): Promise<User> {
             const result = await queryOne<User>(
                 `INSERT INTO clinic.users (email, name, phone, role, gender, date_of_birth, address, password_hash)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING *`,
-                [user.email, user.name, user.phone, user.role, user.gender, user.date_of_birth, user.address, user.password_hash]
+                [user.email || null, user.name, user.phone, user.role, user.gender, user.date_of_birth, user.address, user.password_hash]
             );
             return result!;
         },

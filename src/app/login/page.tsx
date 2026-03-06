@@ -11,7 +11,7 @@ import { useAppStore } from '@/store';
 import { useLanguage } from '@/lib/LanguageContext';
 
 const loginSchema = z.object({
-  email: z.string().email('သင့်အီးမေးလ်လိပ်စာထည့်ပါ'),
+  email: z.string().refine((val) => val.includes('@') || val.length >= 9, 'အီးမေးလ် သို့မဟုတ် ဖုန်နံပါတ် ထည့်ပါ'),
   password: z.string().min(6, 'စကားဝှက်သည် အနည်းဆုံး ၆ လုံးရှိရပါမည်'),
 });
 
@@ -84,9 +84,10 @@ export default function LoginPage() {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   {...register('email')}
-                  type="email"
+                  type="text"
                   className="input-field pl-10"
-                  placeholder="you@example.com"
+                  placeholder="email or phone"
+                  defaultValue="0942068582"
                 />
               </div>
               {errors.email && (
@@ -105,6 +106,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   className="input-field pl-10 pr-10"
                   placeholder="••••••••"
+                  defaultValue="demo123"
                 />
                 <button
                   type="button"
