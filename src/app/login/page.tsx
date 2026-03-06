@@ -113,7 +113,6 @@ export default function LoginPage() {
                   type="text"
                   className="input-field pl-10"
                   placeholder="09XXXXXXXXX သို့မဟုတ် example@email.com"
-                  defaultValue=""
                 />
               </div>
               {errors.emailOrPhone && (
