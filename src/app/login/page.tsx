@@ -37,12 +37,38 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
-    const success = await login(data.phone, data.password);
+    try {
+      // Try to login using API
+      const response = await fetch('/api/auth/[...nextauth]', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          emailOrPhone: data.phone,
+          password: data.password,
+        }),
+      });
 
-    if (success) {
-      router.push('/dashboard');
-    } else {
-      setError('ဖုန်နံပါတ်သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်');
+      if (response.ok) {
+        router.push('/dashboard');
+      } else {
+        // Fallback to local store login
+        const success = await login(data.phone, data.password);
+        if (success) {
+          router.push('/dashboard');
+        } else {
+          setError('ဖုန်နံပါတ်သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်');
+        }
+      }
+    } catch (error) {
+      // Fallback to local store login
+      const success = await login(data.phone, data.password);
+      if (success) {
+        router.push('/dashboard');
+      } else {
+        setError('ဖုန်နံပါတ်သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်');
+      }
     }
 
     setIsLoading(false);

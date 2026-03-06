@@ -120,11 +120,46 @@ export const useAppStore = create<AppState>()(
       getUser: (id) => get().users.find((u) => u.id === id),
 
       login: async (emailOrPhone, password) => {
-        const user = get().users.find((u) => u.email === emailOrPhone || u.phone === emailOrPhone);
-        if (user && user.password === password) {
-          set({ currentUser: user, isAuthenticated: true });
+        // First check local store
+        const localUser = get().users.find((u) => u.email === emailOrPhone || u.phone === emailOrPhone);
+        if (localUser && localUser.password === password) {
+          set({ currentUser: localUser, isAuthenticated: true });
           return true;
         }
+
+        // Then check database via API
+        try {
+          const response = await fetch('/api/auth/[...nextauth]', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              emailOrPhone,
+              password,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.user) {
+              // Add user to local store
+              const userToAdd = {
+                ...data.user,
+                password,
+              };
+              set((state) => ({
+                users: [...state.users, userToAdd],
+                currentUser: userToAdd,
+                isAuthenticated: true,
+              }));
+              return true;
+            }
+          }
+        } catch (error) {
+          console.error('Login API error:', error);
+        }
+
         return false;
       },
 
