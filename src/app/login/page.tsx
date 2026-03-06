@@ -11,7 +11,7 @@ import { useAppStore } from '@/store';
 import { useLanguage } from '@/lib/LanguageContext';
 
 const loginSchema = z.object({
-  phone: z.string().min(9, 'ဖုန်နံပါတ် ထည့်ပါ'),
+  emailOrPhone: z.string().min(1, 'ဖုန်နံပါတ်သို့မဟုတ် အီးမေးလ် ထည့်ပါ'),
   password: z.string().min(6, 'စကားဝှက်သည် အနည်းဆုံး ၆ လုံးရှိရပါမည်'),
 });
 
@@ -45,7 +45,7 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          emailOrPhone: data.phone,
+          emailOrPhone: data.emailOrPhone,
           password: data.password,
         }),
       });
@@ -54,7 +54,7 @@ export default function LoginPage() {
         router.push('/dashboard');
       } else {
         // Fallback to local store login
-        const success = await login(data.phone, data.password);
+        const success = await login(data.emailOrPhone, data.password);
         if (success) {
           router.push('/dashboard');
         } else {
@@ -63,7 +63,7 @@ export default function LoginPage() {
       }
     } catch (error) {
       // Fallback to local store login
-      const success = await login(data.phone, data.password);
+      const success = await login(data.emailOrPhone, data.password);
       if (success) {
         router.push('/dashboard');
       } else {
@@ -104,22 +104,20 @@ export default function LoginPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                ဖုန်နံပါတ်
+                ဖုန်နံပါတ်သို့မဟုတ် အီးမေးလ်
               </label>
               <div className="relative">
-                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
-                  {...register('phone')}
-                  type="tel"
+                  {...register('emailOrPhone')}
+                  type="text"
                   className="input-field pl-10"
-                  placeholder="09XXXXXXXXX"
-                  defaultValue="0942068582"
+                  placeholder="09XXXXXXXXX သို့မဟုတ် example@email.com"
+                  defaultValue=""
                 />
               </div>
-              {errors.phone && (
-                <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>
+              {errors.emailOrPhone && (
+                <p className="mt-1 text-sm text-red-500">{errors.emailOrPhone.message}</p>
               )}
             </div>
 
