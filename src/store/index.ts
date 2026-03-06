@@ -49,6 +49,7 @@ const defaultUsers: (Patient | Doctor | Admin)[] = [
     name: 'Dr. Tun Myat Win',
     phone: '0942068582',
     role: 'doctor',
+    password: 'demo123',
     specialization: 'Male Reproductive Health & Neurology',
     licenseNumber: 'MM123456',
     experience: 15,
@@ -75,6 +76,7 @@ const defaultUsers: (Patient | Doctor | Admin)[] = [
     name: 'Admin User',
     phone: '09123456789',
     role: 'admin',
+    password: 'demo123',
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -84,6 +86,7 @@ const defaultUsers: (Patient | Doctor | Admin)[] = [
     name: 'John Doe',
     phone: '09987654321',
     role: 'patient',
+    password: 'demo123',
     gender: 'male',
     dateOfBirth: new Date('1990-01-15'),
     address: 'Yangon, Myanmar',
@@ -118,7 +121,7 @@ export const useAppStore = create<AppState>()(
 
       login: async (emailOrPhone, password) => {
         const user = get().users.find((u) => u.email === emailOrPhone || u.phone === emailOrPhone);
-        if (user && password === 'demo123') {
+        if (user && user.password === password) {
           set({ currentUser: user, isAuthenticated: true });
           return true;
         }

@@ -5,6 +5,7 @@ export interface User {
   phone: string;
   role: 'patient' | 'doctor' | 'admin';
   avatar?: string;
+  password?: string; // Stored password (should be hashed in production)
   createdAt: Date;
   updatedAt: Date;
 }

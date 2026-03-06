@@ -71,6 +71,7 @@ export default function RegisterPage() {
           name: data.name,
           phone: data.phone,
           role: 'patient' as const,
+          password: data.password, // Store password for login verification
           dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
           gender: data.gender,
           createdAt: new Date(),
