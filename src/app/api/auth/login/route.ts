@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import bcrypt from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
     try {
@@ -32,13 +33,30 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Verify password
-        if (user.password_hash !== password) {
-            console.log('Password mismatch:', user.password_hash, password);
+        // Verify password - handle both bcrypt hash and plain text
+        let isValidPassword;
+        if (user.password_hash && user.password_hash.length === 60 && user.password_hash.startsWith('$2')) {
+            // This looks like a bcrypt hash
+            isValidPassword = await bcrypt.compare(password, user.password_hash);
+        } else {
+            // Assume plain text comparison
+            console.log('Using plain text password comparison');
+            isValidPassword = user.password_hash === password;
+        }
+
+        if (!isValidPassword) {
+            console.log('Password mismatch');
             return NextResponse.json(
                 { success: false, error: 'Invalid credentials' },
                 { status: 401 }
             );
+        }
+
+        // If password is plain text, hash it and update the database for future logins
+        if (user.password_hash && user.password_hash.length !== 60) {
+            console.log('Hashing and updating password');
+            const hashedPassword = await bcrypt.hash(password, 10);
+            await db.users.update(user.id, { password_hash: hashedPassword });
         }
 
         console.log('Login successful:', user.email);
