@@ -30,6 +30,11 @@ export interface Doctor extends User {
   reviewCount: number;
 }
 
+export interface Admin extends User {
+  role: 'admin';
+  permissions?: string[];
+}
+
 export interface AvailableSlot {
   id: string;
   dayOfWeek: number;

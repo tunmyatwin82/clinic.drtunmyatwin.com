@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, Patient, Doctor, Appointment, Consultation, Payment, Message, Notification, Prescription } from '@/types';
+import { User, Patient, Doctor, Admin, Appointment, Consultation, Payment, Message, Notification, Prescription } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface AppState {
-  users: (Patient | Doctor)[];
+  users: (Patient | Doctor | Admin)[];
   appointments: Appointment[];
   consultations: Consultation[];
   payments: Payment[];
@@ -14,9 +14,9 @@ interface AppState {
   currentUser: User | null;
   isAuthenticated: boolean;
 
-  addUser: (user: Patient | Doctor) => void;
-  updateUser: (id: string, data: Partial<Patient | Doctor>) => void;
-  getUser: (id: string) => Patient | Doctor | undefined;
+  addUser: (user: Patient | Doctor | Admin) => void;
+  updateUser: (id: string, data: Partial<Patient | Doctor | Admin>) => void;
+  getUser: (id: string) => Patient | Doctor | Admin | undefined;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   setCurrentUser: (user: User | null) => void;
@@ -42,7 +42,7 @@ interface AppState {
   getDoctor: (id: string) => Doctor | undefined;
 }
 
-const defaultDoctors: Doctor[] = [
+const defaultUsers: (Patient | Doctor | Admin)[] = [
   {
     id: 'dr-1',
     email: 'dr.tunmyatwin@gmail.com',
@@ -69,12 +69,33 @@ const defaultDoctors: Doctor[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    id: 'admin-1',
+    email: 'admin@clinic.com',
+    name: 'Admin User',
+    phone: '09123456789',
+    role: 'admin',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'patient-1',
+    email: 'patient@example.com',
+    name: 'John Doe',
+    phone: '09987654321',
+    role: 'patient',
+    gender: 'male',
+    dateOfBirth: new Date('1990-01-15'),
+    address: 'Yangon, Myanmar',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ];
 
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
-      users: defaultDoctors,
+      users: defaultUsers,
       appointments: [],
       consultations: [],
       payments: [],
@@ -89,7 +110,7 @@ export const useAppStore = create<AppState>()(
 
       updateUser: (id, data) => set((state) => ({
         users: state.users.map((u) =>
-          u.id === id ? { ...u, ...data } as Patient | Doctor : u
+          u.id === id ? { ...u, ...data } as Patient | Doctor | Admin : u
         ),
       })),
 

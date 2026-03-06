@@ -11,7 +11,7 @@ import { useAppStore } from '@/store';
 import { useLanguage } from '@/lib/LanguageContext';
 
 const loginSchema = z.object({
-  email: z.string().refine((val) => val.includes('@') || val.length >= 9, 'အီးမေးလ် သို့မဟုတ် ဖုန်နံပါတ် ထည့်ပါ'),
+  phone: z.string().min(9, 'ဖုန်နံပါတ် ထည့်ပါ'),
   password: z.string().min(6, 'စကားဝှက်သည် အနည်းဆုံး ၆ လုံးရှိရပါမည်'),
 });
 
@@ -37,12 +37,12 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
-    const success = await login(data.email, data.password);
+    const success = await login(data.phone, data.password);
 
     if (success) {
       router.push('/dashboard');
     } else {
-      setError('အီးမေးလ်သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်');
+      setError('ဖုန်နံပါတ်သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်');
     }
 
     setIsLoading(false);
@@ -78,20 +78,22 @@ export default function LoginPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t.auth.email}
+                ဖုန်နံပါတ်
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
                 <input
-                  {...register('email')}
-                  type="text"
+                  {...register('phone')}
+                  type="tel"
                   className="input-field pl-10"
-                  placeholder="email or phone"
+                  placeholder="09XXXXXXXXX"
                   defaultValue="0942068582"
                 />
               </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>
               )}
             </div>
 
@@ -155,7 +157,7 @@ export default function LoginPage() {
 
           <div className="mt-6 pt-6 border-t border-gray-100">
             <p className="text-sm text-gray-500 text-center">
-              အစမ်းသုံးမှု: dr.tunmyatwin@gmail.com / demo123
+              အစမ်းသုံးမှု: 0942068582 (Doctor) / 09123456789 (Admin) / 09987654321 (Patient) / demo123
             </p>
           </div>
         </div>

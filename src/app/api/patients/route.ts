@@ -34,6 +34,25 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
+        // Check if user already exists with same email or phone
+        if (body.email) {
+            const existingUserByEmail = await db.users.getByEmail(body.email);
+            if (existingUserByEmail) {
+                return NextResponse.json(
+                    { success: false, error: 'Email already registered' },
+                    { status: 400 }
+                );
+            }
+        }
+
+        const existingUserByPhone = await db.users.getByPhone(body.phone);
+        if (existingUserByPhone) {
+            return NextResponse.json(
+                { success: false, error: 'Phone number already registered' },
+                { status: 400 }
+            );
+        }
+
         // First create the user
         const user = await db.users.create({
             email: body.email,
