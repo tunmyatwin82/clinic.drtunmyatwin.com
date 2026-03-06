@@ -120,15 +120,22 @@ export const useAppStore = create<AppState>()(
       getUser: (id) => get().users.find((u) => u.id === id),
 
       login: async (emailOrPhone, password) => {
+        console.log('Login attempt:', emailOrPhone);
+        console.log('Local users:', get().users.map(u => ({ email: u.email, phone: u.phone, id: u.id, password: u.password })));
+
         // First check local store
         const localUser = get().users.find((u) => u.email === emailOrPhone || u.phone === emailOrPhone);
+        console.log('Local user found:', localUser);
+
         if (localUser && localUser.password === password) {
+          console.log('Local login successful');
           set({ currentUser: localUser, isAuthenticated: true });
           return true;
         }
 
         // Then check database via new login endpoint
         try {
+          console.log('Calling login API...');
           const loginResponse = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
@@ -140,12 +147,15 @@ export const useAppStore = create<AppState>()(
             }),
           });
 
+          console.log('API response status:', loginResponse.status);
+          const loginData = await loginResponse.json();
+          console.log('API response data:', loginData);
+
           if (loginResponse.ok) {
-            const loginData = await loginResponse.json();
             if (loginData.success && loginData.user) {
               const { user } = loginData;
 
-              // Add user to local store
+              // Add or update user in local store
               const userToAdd = {
                 id: user.id,
                 email: user.email,
@@ -157,11 +167,23 @@ export const useAppStore = create<AppState>()(
                 updatedAt: new Date(),
               };
 
-              set((state) => ({
-                users: [...state.users, userToAdd],
-                currentUser: userToAdd,
-                isAuthenticated: true,
-              }));
+              set((state) => {
+                const existingIndex = state.users.findIndex(u => u.email === user.email || u.phone === user.phone);
+                let updatedUsers;
+                if (existingIndex !== -1) {
+                  updatedUsers = [...state.users];
+                  updatedUsers[existingIndex] = userToAdd;
+                } else {
+                  updatedUsers = [...state.users, userToAdd];
+                }
+                return {
+                  users: updatedUsers,
+                  currentUser: userToAdd,
+                  isAuthenticated: true,
+                };
+              });
+
+              console.log('API login successful');
               return true;
             }
           }
@@ -169,6 +191,7 @@ export const useAppStore = create<AppState>()(
           console.error('Login API error:', error);
         }
 
+        console.log('Login failed');
         return false;
       },
 
