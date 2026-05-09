@@ -1,8 +1,8 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { db } from "@/lib/db"
+import { db, type User as DbUser } from "@/lib/db"
 
-const handler = NextAuth({
+export const { handlers: { GET, POST } } = NextAuth({
     providers: [
         Credentials({
             name: "Credentials",
@@ -15,11 +15,10 @@ const handler = NextAuth({
                     return null
                 }
 
-                const { emailOrPhone, password } = credentials as { emailOrPhone: string; password: string }
+                const { emailOrPhone } = credentials as { emailOrPhone: string; password: string }
 
-                // Check if input is email or phone
                 const isEmail = emailOrPhone.includes("@")
-                let user: any = null
+                let user: DbUser | null = null
 
                 if (isEmail) {
                     user = await db.users.getByEmail(emailOrPhone)
@@ -31,7 +30,6 @@ const handler = NextAuth({
                     return null
                 }
 
-                // In a real application, you should verify the password hash
                 if (credentials.password !== user.password_hash) {
                     return null
                 }
@@ -70,6 +68,4 @@ const handler = NextAuth({
     session: {
         strategy: "jwt"
     }
-}) as unknown as any;
-
-export { handler as GET, handler as POST }
+})

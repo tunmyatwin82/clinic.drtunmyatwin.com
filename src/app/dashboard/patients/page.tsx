@@ -6,18 +6,18 @@ import { format } from 'date-fns';
 import {
   Users,
   Search,
-  Filter,
   Mail,
   Phone,
-  Calendar,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { Patient } from '@/types';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function PatientsPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { currentUser, isAuthenticated, appointments, getUser } = useAppStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,18 +67,18 @@ export default function PatientsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Patients</h1>
-          <p className="text-gray-500">Manage your patient records</p>
+          <h1 className="text-2xl font-bold text-foreground">{t.patients.title}</h1>
+          <p className="text-muted-foreground">{t.patients.subtitle}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search patients..."
+              placeholder={t.patients.search}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 w-64"
+              className="pl-10 pr-4 py-2 border border-border bg-card text-foreground rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary w-64"
             />
           </div>
         </div>
@@ -89,19 +89,19 @@ export default function PatientsPage() {
           <table className="table">
             <thead>
               <tr>
-                <th>Patient</th>
-                <th>Contact</th>
-                <th>Total Visits</th>
-                <th>Last Visit</th>
-                <th>Actions</th>
+                <th>{t.patients.columns.patient}</th>
+                <th>{t.patients.columns.contact}</th>
+                <th>{t.patients.columns.totalVisits}</th>
+                <th>{t.patients.columns.lastVisit}</th>
+                <th>{t.patients.columns.actions}</th>
               </tr>
             </thead>
             <tbody>
               {paginatedPatients.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center py-12">
-                    <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-500">No patients found</p>
+                    <Users className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
+                    <p className="text-muted-foreground">{t.patients.noPatientsFound}</p>
                   </td>
                 </tr>
               ) : (
@@ -109,12 +109,12 @@ export default function PatientsPage() {
                   <tr key={patient.id}>
                     <td>
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center text-sky-600 font-medium">
+                        <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center text-primary font-medium">
                           {patient.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{patient.name}</p>
-                          <p className="text-sm text-gray-500">
+                          <p className="font-medium text-foreground">{patient.name}</p>
+                          <p className="text-sm text-muted-foreground">
                             {patient.gender && `${patient.gender.charAt(0).toUpperCase()}${patient.gender.slice(1)}`}
                             {patient.dateOfBirth && ` • ${format(new Date(patient.dateOfBirth), 'MMM d, yyyy')}`}
                           </p>
@@ -124,11 +124,11 @@ export default function PatientsPage() {
                     <td>
                       <div className="space-y-1">
                         <p className="flex items-center gap-2 text-sm">
-                          <Mail className="w-4 h-4 text-gray-400" />
+                          <Mail className="w-4 h-4 text-muted-foreground" />
                           {patient.email}
                         </p>
                         <p className="flex items-center gap-2 text-sm">
-                          <Phone className="w-4 h-4 text-gray-400" />
+                          <Phone className="w-4 h-4 text-muted-foreground" />
                           {patient.phone}
                         </p>
                       </div>
@@ -140,7 +140,7 @@ export default function PatientsPage() {
                       {patient.lastVisit ? (
                         <span>{format(new Date(patient.lastVisit), 'MMM d, yyyy')}</span>
                       ) : (
-                        <span className="text-gray-400">No visits yet</span>
+                        <span className="text-muted-foreground">{t.patients.noVisits}</span>
                       )}
                     </td>
                     <td>
@@ -149,13 +149,13 @@ export default function PatientsPage() {
                           onClick={() => router.push(`/dashboard/patients/${patient.id}`)}
                           className="btn-secondary py-1.5 px-3 text-sm"
                         >
-                          View Profile
+                          {t.patients.viewProfile}
                         </button>
                         <button
                           onClick={() => router.push(`/dashboard/messages?patient=${patient.id}`)}
                           className="btn-primary py-1.5 px-3 text-sm"
                         >
-                          Message
+                          {t.patients.message}
                         </button>
                       </div>
                     </td>
@@ -167,25 +167,30 @@ export default function PatientsPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-            <p className="text-sm text-gray-500">
-              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, patients.length)} of {patients.length} patients
+          <div className="flex items-center justify-between px-6 py-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">
+              {t.patients.showingRange
+                .replace('{from}', String((currentPage - 1) * itemsPerPage + 1))
+                .replace('{to}', String(Math.min(currentPage * itemsPerPage, patients.length)))
+                .replace('{total}', String(patients.length))}
             </p>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="p-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="p-2 border border-border bg-card rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-sm text-gray-600">
-                Page {currentPage} of {totalPages}
+              <span className="text-sm text-muted-foreground">
+                {t.patients.pageOf
+                  .replace('{current}', String(currentPage))
+                  .replace('{total}', String(totalPages))}
               </span>
               <button
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
-                className="p-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="p-2 border border-border bg-card rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

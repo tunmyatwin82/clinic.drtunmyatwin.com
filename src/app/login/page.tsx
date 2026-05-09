@@ -1,32 +1,73 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Eye, EyeOff, Mail, Lock, Stethoscope, Globe } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { useLanguage } from '@/lib/LanguageContext';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 
-const loginSchema = z.object({
-  emailOrPhone: z.string().min(1, 'ဖုန်နံပါတ်သို့မဟုတ် အီးမေးလ် ထည့်ပါ'),
-  password: z.string().min(6, 'စကားဝှက်သည် အနည်းဆုံး ၆ လုံးရှိရပါမည်'),
-});
+function buildLoginSchema(messages: { identifier: string; password: string }) {
+  return z.object({
+    emailOrPhone: z.string().trim().min(1, messages.identifier),
+    password: z.string().min(6, messages.password),
+    rememberMe: z.boolean().optional(),
+  });
+}
 
-type LoginForm = z.infer<typeof loginSchema>;
+type LoginForm = z.infer<ReturnType<typeof buildLoginSchema>>;
 
-export default function LoginPage() {
+/** Same-origin relative paths only — blocks open redirects. */
+function getSafeRedirectParam(raw: string | null): string {
+  if (!raw) return '/dashboard';
+  let path: string;
+  try {
+    path = decodeURIComponent(raw.trim());
+  } catch {
+    return '/dashboard';
+  }
+  if (!path.startsWith('/') || path.startsWith('//')) return '/dashboard';
+  if (path.includes('://')) return '/dashboard';
+  return path;
+}
+
+function LoginFormInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAppStore();
   const { language, setLanguage, t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const redirectAfterLogin = getSafeRedirectParam(searchParams.get('redirect'));
+
+  const registerHref =
+    redirectAfterLogin && redirectAfterLogin !== '/dashboard'
+      ? `/register?redirect=${encodeURIComponent(redirectAfterLogin)}`
+      : '/register';
+
+  const loginSchema = useMemo(
+    () =>
+      buildLoginSchema({
+        identifier: t.auth.validationLoginIdentifier,
+        password: t.auth.validationPasswordMin,
+      }),
+    [t.auth.validationLoginIdentifier, t.auth.validationPasswordMin],
+  );
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginForm>({
@@ -34,140 +75,203 @@ export default function LoginPage() {
     defaultValues: {
       emailOrPhone: '',
       password: '',
+      rememberMe: false,
     },
   });
+
+  const loadingLabel = language === 'en' ? 'Signing in' : 'ဝင်ရောက်နေပါသည်';
 
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     setError('');
 
     try {
-      // Use the login function from the store which now uses /api/users
       const success = await login(data.emailOrPhone, data.password);
       if (success) {
-        router.push('/dashboard');
+        router.push(redirectAfterLogin);
       } else {
-        setError('ဖုန်နံပါတ်သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်');
+        setError(t.auth.loginInvalidCredentials);
       }
-    } catch (error) {
-      console.error('Login error:', error);
-      setError('Login failed');
+    } catch (e) {
+      console.error('Login error:', e);
+      setError(t.auth.loginUnexpectedError);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-sky-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-app-mesh flex items-center justify-center p-4 py-12">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <Stethoscope className="w-10 h-10 text-sky-500" />
-            <span className="text-2xl font-bold text-gray-900">ဒေါက်တာထွန်းမြတ်ဝင်း</span>
+        <div className="mb-8 text-center">
+          <Link href="/" className="group mb-6 inline-flex flex-col items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-500 shadow-lg shadow-sky-500/25 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.34,1.25,0.64,1)] motion-safe:group-hover:scale-105">
+              <Stethoscope className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold text-foreground">
+              {language === 'en' ? 'Dr. Tun Myat Win' : 'ဒေါက်တာထွန်းမြတ်ဝင်း'}
+            </span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">{t.auth.welcomeBack}</h1>
-          <p className="text-gray-600 mt-2">သင့်အကောင့်သို့ ဝင်ပါ</p>
+          <h1 className="text-2xl font-bold text-foreground">{t.auth.welcomeBack}</h1>
+          <p className="mt-2 text-balance text-muted-foreground">{t.auth.signInSubtitle}</p>
 
-          <button
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => setLanguage(language === 'en' ? 'my' : 'en')}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            className="mt-4 rounded-xl border border-border bg-card/80 shadow-md backdrop-blur-md hover:bg-card hover:shadow-lg"
           >
-            <Globe className="w-4 h-4 text-gray-500" />
-            <span className="text-sm">{language === 'en' ? 'မြန်မာ' : 'English'}</span>
-          </button>
+            <Globe className="text-muted-foreground" aria-hidden />
+            {language === 'en' ? 'မြန်မာ' : 'English'}
+          </Button>
         </div>
 
-        <div className="card p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {error && (
-              <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
+        <Card className="border border-border bg-card/95 shadow-[var(--clinical-shadow)] backdrop-blur-md">
+          <CardContent className="pt-6">
+            <form id="login-form" onSubmit={handleSubmit(onSubmit)} className="space-y-0">
+              <FieldGroup>
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                ဖုန်နံပါတ်သို့မဟုတ် အီးမေးလ်
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  {...register('emailOrPhone')}
-                  type="text"
-                  className="input-field pl-10"
-                  placeholder="09XXXXXXXXX သို့မဟုတ် example@email.com"
-                />
-              </div>
-              {errors.emailOrPhone && (
-                <p className="mt-1 text-sm text-red-500">{errors.emailOrPhone.message}</p>
-              )}
-            </div>
+                <Field data-invalid={!!errors.emailOrPhone}>
+                  <FieldLabel htmlFor="login-id">{t.auth.emailOrPhoneLabel}</FieldLabel>
+                  <div className="relative">
+                    <Mail
+                      className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                      aria-hidden
+                    />
+                    <Input
+                      id="login-id"
+                      {...register('emailOrPhone')}
+                      type="text"
+                      autoComplete="username"
+                      className="pl-9"
+                      placeholder={t.auth.emailOrPhonePlaceholder}
+                      aria-invalid={!!errors.emailOrPhone}
+                      aria-describedby={errors.emailOrPhone ? 'login-id-error' : undefined}
+                    />
+                  </div>
+                  <FieldError id="login-id-error" errors={[errors.emailOrPhone]} />
+                </Field>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t.auth.password}
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  {...register('password')}
-                  type={showPassword ? 'text' : 'password'}
-                  className="input-field pl-10 pr-10"
-                  placeholder="••••••••"
-                  defaultValue="demo123"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                <Field data-invalid={!!errors.password}>
+                  <FieldLabel htmlFor="login-password">{t.auth.password}</FieldLabel>
+                  <div className="relative">
+                    <Lock
+                      className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                      aria-hidden
+                    />
+                    <Input
+                      id="login-password"
+                      {...register('password')}
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      className="pr-10 pl-9"
+                      placeholder="••••••••"
+                      aria-invalid={!!errors.password}
+                      aria-describedby={errors.password ? 'login-password-error' : undefined}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={
+                        showPassword
+                          ? language === 'en'
+                            ? 'Hide password'
+                            : 'စကားဝှက်ဖျောက်မည်'
+                          : language === 'en'
+                            ? 'Show password'
+                            : 'စကားဝှက်ပြမည်'
+                      }
+                    >
+                      {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    </Button>
+                  </div>
+                  <FieldError id="login-password-error" errors={[errors.password]} />
+                </Field>
+
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <Controller
+                    name="rememberMe"
+                    control={control}
+                    render={({ field }) => (
+                      <div className="flex items-start gap-3">
+                        <Checkbox
+                          id="login-remember"
+                          checked={!!field.value}
+                          onCheckedChange={(checked) => field.onChange(checked)}
+                          className="mt-0.5"
+                        />
+                        <FieldLabel htmlFor="login-remember" className="cursor-pointer font-normal text-muted-foreground">
+                          {t.auth.rememberMe}
+                        </FieldLabel>
+                      </div>
+                    )}
+                  />
+                  <a
+                    href="#"
+                    className="text-sm text-primary underline-offset-4 hover:underline"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    {t.auth.forgotPassword}
+                  </a>
+                </div>
+
+                <Button
+                  type="submit"
+                  form="login-form"
+                  disabled={isLoading}
+                  aria-busy={isLoading}
+                  className="w-full gap-2"
+                  size="lg"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
-              )}
-            </div>
+                  {isLoading ? (
+                    <>
+                      <Spinner className="size-4 text-primary-foreground" aria-hidden />
+                      <span className="sr-only">{loadingLabel}</span>
+                    </>
+                  ) : (
+                    t.auth.signIn
+                  )}
+                </Button>
+              </FieldGroup>
+            </form>
+          </CardContent>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-sky-500 focus:ring-sky-500" />
-                <span className="text-sm text-gray-600">{t.auth.rememberMe}</span>
-              </label>
-              <a href="#" className="text-sm text-sky-500 hover:text-sky-600">
-                {t.auth.forgotPassword}
-              </a>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="btn-primary w-full flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                t.auth.signIn
-              )}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
+          <CardFooter className="flex flex-col gap-6 border-t border-border/60 bg-transparent py-6">
+            <p className="text-center text-sm text-muted-foreground">
               {t.auth.noAccount}{' '}
-              <Link href="/register" className="text-sky-500 hover:text-sky-600 font-medium">
+              <Link href={registerHref} className="font-medium text-primary underline-offset-4 hover:underline">
                 {t.auth.signUpHere}
               </Link>
             </p>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-gray-100">
-            <p className="text-sm text-gray-500 text-center">
-              အစမ်းသုံးမှု: 0942068582 (Doctor) / 09123456789 (Admin) / 09987654321 (Patient) / demo123
+            <p className="border-border/60 border-t pt-6 text-center text-xs text-muted-foreground">
+              {t.auth.demoAccountsHint}
             </p>
-          </div>
-        </div>
+          </CardFooter>
+        </Card>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-app-mesh flex flex-col items-center justify-center gap-3 p-4">
+          <Spinner className="size-10 text-clinical-primary" />
+          <span className="sr-only">Loading</span>
+        </div>
+      }
+    >
+      <LoginFormInner />
+    </Suspense>
   );
 }

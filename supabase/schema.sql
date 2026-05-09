@@ -435,7 +435,7 @@ VALUES (
   'doctor-001',
   'doctor@clinic.com',
   'ဒေါက်တာထွန်းမြတ်ဝင်း',
-  '0942068582',
+  '09421068582',
   'doctor',
   'male'
 ) ON CONFLICT (id) DO NOTHING;

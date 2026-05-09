@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import bcrypt from 'bcryptjs';
 
 // GET /api/patients - Get all patients
 export async function GET(request: NextRequest) {
@@ -20,10 +21,11 @@ export async function GET(request: NextRequest) {
 
         const patients = await db.patients.getAll();
         return NextResponse.json({ success: true, data: patients });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error fetching patients:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
@@ -33,10 +35,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
+        const email = typeof body.email === 'string' && body.email.trim() !== '' ? body.email.trim() : null;
 
         // Check if user already exists with same email or phone
-        if (body.email) {
-            const existingUserByEmail = await db.users.getByEmail(body.email);
+        if (email) {
+            const existingUserByEmail = await db.users.getByEmail(email);
             if (existingUserByEmail) {
                 return NextResponse.json(
                     { success: false, error: 'Email already registered' },
@@ -53,15 +56,17 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        const passwordHash = await bcrypt.hash(body.password, 10);
+
         // First create the user
         const user = await db.users.create({
-            email: body.email,
+            email: email ?? undefined,
             name: body.name,
             phone: body.phone,
             role: 'patient',
             gender: body.gender,
             date_of_birth: body.date_of_birth,
-            password_hash: body.password, // In production, hash this!
+            password_hash: passwordHash,
         });
 
         // Then create the patient record
@@ -77,10 +82,11 @@ export async function POST(request: NextRequest) {
             success: true,
             data: { ...patient, user_id: user.id, user }
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error creating patient:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
@@ -93,10 +99,11 @@ export async function PUT(request: NextRequest) {
         const { id, ...updates } = body;
         const patient = await db.patients.update(id, updates);
         return NextResponse.json({ success: true, data: patient });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error updating patient:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }

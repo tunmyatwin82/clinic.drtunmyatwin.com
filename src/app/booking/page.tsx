@@ -48,10 +48,10 @@ const consultationTypes = [
 ];
 
 const paymentMethods = [
-  { id: 'kbzpay', name: 'KBZPay', logo: '💳', phone: '0942068582', accountName: 'U Tun Myat Win' },
-  { id: 'wave', name: 'WavePay', logo: '💳', phone: '0942068582', accountName: 'U Tun Myat Win' },
-  { id: 'ayapay', name: 'AYaPay', logo: '💳', phone: '0942068582', accountName: 'U Tun Myat Win' },
-  { id: 'cash', name: 'လက်ငင်းပေးချင်း', logo: '💵', phone: '0942068582', accountName: 'U Tun Myat Win' },
+  { id: 'kbzpay', name: 'KBZPay', logo: '💳', phone: '09421068582', accountName: 'U Tun Myat Win' },
+  { id: 'wave', name: 'WavePay', logo: '💳', phone: '09421068582', accountName: 'U Tun Myat Win' },
+  { id: 'ayapay', name: 'AYaPay', logo: '💳', phone: '09421068582', accountName: 'U Tun Myat Win' },
+  { id: 'cash', name: 'လက်ငင်းပေးချင်း', logo: '💵', phone: '09421068582', accountName: 'U Tun Myat Win' },
 ];
 
 export default function BookingPage() {
@@ -221,7 +221,7 @@ export default function BookingPage() {
 
   if (paymentSuccess) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-app-mesh flex items-center justify-center p-4">
         <div className="card p-8 max-w-md w-full text-center">
           <div className="w-20 h-20 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-6">
             <CheckCircle className="w-10 h-10 text-emerald-500" />
@@ -246,7 +246,7 @@ export default function BookingPage() {
   const selectedPaymentMethod = paymentMethods.find(m => m.id === selectedPayment);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-app-mesh py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -560,30 +560,33 @@ export default function BookingPage() {
                   </div>
                 )}
 
-                <div className="flex justify-between mt-8 pt-6 border-t border-gray-100">
+                <div className="mt-8 flex flex-col gap-3 border-t border-gray-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
                   {step > 1 ? (
                     <button
+                      type="button"
                       onClick={() => setStep(step - 1)}
-                      className="btn-secondary"
+                      className="btn-secondary order-2 w-full min-h-11 shrink-0 sm:order-1 sm:w-auto"
                     >
                       {t.booking.previous}
                     </button>
                   ) : (
-                    <div />
+                    <div className="hidden sm:block sm:min-w-0 sm:flex-1" aria-hidden="true" />
                   )}
 
                   {step < 4 ? (
                     <button
+                      type="button"
                       onClick={() => setStep(step + 1)}
-                      className="btn-primary"
+                      className="btn-primary order-1 w-full min-h-11 shrink-0 sm:order-2 sm:ml-auto sm:w-auto"
                     >
                       {t.booking.continue}
                     </button>
                   ) : (
                     <button
+                      type="button"
                       onClick={handlePayment}
                       disabled={isProcessing}
-                      className="btn-success flex items-center gap-2"
+                      className="btn-success order-1 flex min-h-11 w-full flex-wrap items-center justify-center gap-2 sm:order-2 sm:ml-auto sm:w-auto sm:max-w-md"
                     >
                       {isProcessing ? (
                         <>

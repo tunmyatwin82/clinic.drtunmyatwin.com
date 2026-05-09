@@ -72,6 +72,9 @@ export interface Appointment {
     patient?: Patient;
     doctor_id: string;
     doctor?: Doctor;
+    /** Present when loaded via joins (notifications, etc.) */
+    patient_user_id?: string;
+    doctor_user_id?: string;
     date: Date;
     start_time: string;
     end_time: string;
@@ -153,7 +156,7 @@ export interface Notification {
 }
 
 // Helper function to run queries
-export async function query<T>(text: string, params?: any[]): Promise<T[]> {
+export async function query<T>(text: string, params?: unknown[]): Promise<T[]> {
     const client = await pool.connect();
     try {
         const result = await client.query(text, params);
@@ -164,7 +167,7 @@ export async function query<T>(text: string, params?: any[]): Promise<T[]> {
 }
 
 // Helper function for single row results
-export async function queryOne<T>(text: string, params?: any[]): Promise<T | null> {
+export async function queryOne<T>(text: string, params?: unknown[]): Promise<T | null> {
     const rows = await query<T>(text, params);
     return rows.length > 0 ? rows[0] : null;
 }

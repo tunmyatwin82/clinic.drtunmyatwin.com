@@ -26,10 +26,11 @@ export async function GET(request: NextRequest) {
 
         const appointments = await db.appointments.getAll();
         return NextResponse.json({ success: true, data: appointments });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error fetching appointments:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
@@ -50,10 +51,11 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json({ success: true, data: appointment });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error creating appointment:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
@@ -71,7 +73,7 @@ export async function PUT(request: NextRequest) {
 
         // Create notification for status changes
         if (updates.status && appointmentDetails) {
-            const patientUserId = (appointmentDetails as any).patient_user_id;
+            const patientUserId = appointmentDetails.patient_user_id;
             if (patientUserId) {
                 await db.notifications.create({
                     user_id: patientUserId,
@@ -83,10 +85,11 @@ export async function PUT(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: appointment });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error updating appointment:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
@@ -107,10 +110,11 @@ export async function DELETE(request: NextRequest) {
 
         await db.appointments.delete(id);
         return NextResponse.json({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error deleting appointment:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }

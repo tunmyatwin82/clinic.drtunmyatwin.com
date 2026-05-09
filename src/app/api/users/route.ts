@@ -25,10 +25,11 @@ export async function GET(request: NextRequest) {
         }
 
         return NextResponse.json({ success: false, error: 'Email or phone required' }, { status: 400 });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error fetching user:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }

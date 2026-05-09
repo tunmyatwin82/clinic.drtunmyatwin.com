@@ -2,21 +2,22 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { 
-  Search, 
-  Send, 
-  Paperclip, 
+import {
+  Search,
+  Send,
+  Paperclip,
   MoreVertical,
   Phone,
   Video,
-  ArrowLeft
 } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { format } from 'date-fns';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function MessagesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const { currentUser, isAuthenticated, appointments, getUser, sendMessage, getMessages } = useAppStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedChat, setSelectedChat] = useState<string | null>(searchParams.get('patient'));
@@ -38,8 +39,8 @@ export default function MessagesPage() {
   }
 
   const chats = appointments
-    .filter(a => 
-      (currentUser.role === 'patient' ? a.doctorId : a.patientId) && 
+    .filter(a =>
+      (currentUser.role === 'patient' ? a.doctorId : a.patientId) &&
       a.status === 'completed'
     )
     .reduce((acc, appointment) => {
@@ -53,7 +54,7 @@ export default function MessagesPage() {
             avatar: otherUser.name.charAt(0),
             lastMessage: '',
             unread: 0,
-            online: Math.random() > 0.5,
+            online: otherId.split('').reduce((sum, c) => sum + c.charCodeAt(0), 0) % 2 === 0,
           });
         }
       }
@@ -80,45 +81,45 @@ export default function MessagesPage() {
     <div className="h-[calc(100vh-8rem)]">
       <div className="grid lg:grid-cols-4 h-full">
         <div className="card lg:col-span-1 flex flex-col h-full">
-          <div className="p-4 border-b border-gray-100">
-            <h2 className="font-semibold text-gray-900 mb-4">Messages</h2>
+          <div className="p-4 border-b border-border">
+            <h2 className="font-semibold text-foreground mb-4">{t.messages.title}</h2>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search conversations..."
+                placeholder={t.messages.search}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full pl-10 pr-4 py-2 border border-border bg-card text-foreground rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
 
           <div className="flex-1 overflow-y-auto">
             {chats.length === 0 ? (
-              <div className="p-4 text-center text-gray-500">
-                <p>No conversations yet</p>
+              <div className="p-4 text-center text-muted-foreground">
+                <p>{t.messages.noConversations}</p>
               </div>
             ) : (
               chats.map((chat) => (
                 <button
                   key={chat.id}
                   onClick={() => setSelectedChat(chat.id)}
-                  className={`w-full p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-50 ${
-                    selectedChat === chat.id ? 'bg-sky-50' : ''
+                  className={`w-full p-4 flex items-center gap-3 hover:bg-muted transition-colors border-b border-border ${
+                    selectedChat === chat.id ? 'bg-primary/10' : ''
                   }`}
                 >
                   <div className="relative">
-                    <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-sky-600 font-medium">
+                    <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center text-primary font-medium">
                       {chat.avatar}
                     </div>
                     {chat.online && (
-                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
+                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-card rounded-full" />
                     )}
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="font-medium text-gray-900">{chat.name}</p>
-                    <p className="text-sm text-gray-500 truncate">{chat.lastMessage || 'Start a conversation'}</p>
+                    <p className="font-medium text-foreground">{chat.name}</p>
+                    <p className="text-sm text-muted-foreground truncate">{chat.lastMessage || t.messages.startConversation}</p>
                   </div>
                 </button>
               ))
@@ -129,24 +130,24 @@ export default function MessagesPage() {
         <div className="hidden lg:flex lg:col-span-3 card flex-col h-full">
           {selectedChat && currentChat ? (
             <>
-              <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+              <div className="p-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center text-sky-600 font-medium">
+                  <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center text-primary font-medium">
                     {currentChat.name.charAt(0)}
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{currentChat.name}</p>
-                    <p className="text-sm text-gray-500">{currentChat.role === 'doctor' ? 'Doctor' : 'Patient'}</p>
+                    <p className="font-medium text-foreground">{currentChat.name}</p>
+                    <p className="text-sm text-muted-foreground">{currentChat.role === 'doctor' ? t.messages.roleDoctor : t.messages.rolePatient}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                  <button type="button" className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg">
                     <Phone className="w-5 h-5" />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                  <button type="button" className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg">
                     <Video className="w-5 h-5" />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                  <button type="button" className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg">
                     <MoreVertical className="w-5 h-5" />
                   </button>
                 </div>
@@ -161,13 +162,13 @@ export default function MessagesPage() {
                     <div
                       className={`max-w-[70%] rounded-2xl px-4 py-2 ${
                         message.senderId === currentUser.id
-                          ? 'bg-sky-500 text-white'
-                          : 'bg-gray-100 text-gray-900'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted text-foreground'
                       }`}
                     >
                       <p>{message.content}</p>
                       <p className={`text-xs mt-1 ${
-                        message.senderId === currentUser.id ? 'text-sky-100' : 'text-gray-400'
+                        message.senderId === currentUser.id ? 'text-primary-foreground/80' : 'text-muted-foreground'
                       }`}>
                         {format(new Date(message.createdAt), 'h:mm a')}
                       </p>
@@ -177,9 +178,9 @@ export default function MessagesPage() {
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="p-4 border-t border-gray-100">
+              <div className="p-4 border-t border-border">
                 <div className="flex items-center gap-2">
-                  <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                  <button type="button" className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg">
                     <Paperclip className="w-5 h-5" />
                   </button>
                   <input
@@ -187,13 +188,14 @@ export default function MessagesPage() {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="Type a message..."
-                    className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    placeholder={t.messages.typeMessage}
+                    className="flex-1 px-4 py-2 border border-border bg-card text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                   <button
+                    type="button"
                     onClick={handleSendMessage}
                     disabled={!newMessage.trim()}
-                    className="p-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send className="w-5 h-5" />
                   </button>
@@ -201,9 +203,9 @@ export default function MessagesPage() {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-400">
+            <div className="flex-1 flex items-center justify-center text-muted-foreground">
               <div className="text-center">
-                <p className="text-lg">Select a conversation to start messaging</p>
+                <p className="text-lg">{t.messages.selectConversation}</p>
               </div>
             </div>
           )}

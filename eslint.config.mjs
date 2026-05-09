@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Standalone Node scripts (CommonJS)
+    "fetch-telegram-news.js",
+    "fetch-trending-topics.js",
   ]),
 ]);
 

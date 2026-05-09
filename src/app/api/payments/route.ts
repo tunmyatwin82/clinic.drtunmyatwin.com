@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { db, type Payment } from '@/lib/db';
+
+const PAYMENT_STATUSES = ['pending', 'paid', 'failed', 'refunded'] as const;
+type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
+
+function isPaymentStatus(value: string): value is PaymentStatus {
+    return (PAYMENT_STATUSES as readonly string[]).includes(value);
+}
 
 // Simple file upload placeholder - implement with your preferred storage
 async function uploadFile(bucket: string, path: string, file: File): Promise<string> {
     // TODO: Implement file upload to your storage (e.g., local, S3, etc.)
     console.log('File upload not implemented:', bucket, path, file.name);
     return `/uploads/${path}`;
-}
-
-async function deleteFile(bucket: string, path: string): Promise<void> {
-    // TODO: Implement file deletion from your storage
-    console.log('File delete not implemented:', bucket, path);
 }
 
 // GET /api/payments - Get payments
@@ -40,10 +42,11 @@ export async function GET(request: NextRequest) {
             { success: false, error: 'Payment ID, Appointment ID, or Patient ID is required' },
             { status: 400 }
         );
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error fetching payments:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
@@ -83,7 +86,7 @@ export async function POST(request: NextRequest) {
         // Create notification for the doctor
         const appointment = await db.appointments.getById(appointmentId);
         if (appointment) {
-            const doctorUserId = (appointment as any).doctor_user_id;
+            const doctorUserId = appointment.doctor_user_id;
             if (doctorUserId) {
                 await db.notifications.create({
                     user_id: doctorUserId,
@@ -95,10 +98,11 @@ export async function POST(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: payment });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error creating payment:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
@@ -113,12 +117,12 @@ export async function PUT(request: NextRequest) {
         const status = formData.get('status') as string;
         const screenshot = formData.get('screenshot') as File | null;
 
-        const updates: any = {};
+        const updates: Partial<Payment> = {};
 
-        if (status) {
+        if (status && isPaymentStatus(status)) {
             updates.status = status;
             if (status === 'paid') {
-                updates.paid_at = new Date().toISOString();
+                updates.paid_at = new Date();
             }
         }
 
@@ -141,7 +145,7 @@ export async function PUT(request: NextRequest) {
             if (paymentDetails) {
                 const appointment = await db.appointments.getById(paymentDetails.appointment_id);
                 if (appointment) {
-                    const patientUserId = (appointment as any).patient_user_id;
+                    const patientUserId = appointment.patient_user_id;
                     if (patientUserId) {
                         await db.notifications.create({
                             user_id: patientUserId,
@@ -155,10 +159,11 @@ export async function PUT(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: payment });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error updating payment:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }

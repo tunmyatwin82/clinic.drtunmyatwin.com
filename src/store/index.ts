@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, Patient, Doctor, Admin, Appointment, Consultation, Payment, Message, Notification, Prescription } from '@/types';
+import { User, Patient, Doctor, Admin, Appointment, Consultation, Payment, Message, Notification } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface AppState {
@@ -47,7 +47,7 @@ const defaultUsers: (Patient | Doctor | Admin)[] = [
     id: 'dr-1',
     email: 'dr.tunmyatwin@gmail.com',
     name: 'Dr. Tun Myat Win',
-    phone: '0942068582',
+    phone: '09421068582',
     role: 'doctor',
     password: 'demo123',
     specialization: 'Male Reproductive Health & Neurology',
@@ -121,11 +121,10 @@ export const useAppStore = create<AppState>()(
 
       login: async (emailOrPhone, password) => {
         console.log('Login attempt:', emailOrPhone);
-        console.log('Local users:', get().users.map(u => ({ email: u.email, phone: u.phone, id: u.id, password: u.password })));
 
         // First check local store
         const localUser = get().users.find((u) => u.email === emailOrPhone || u.phone === emailOrPhone);
-        console.log('Local user found:', localUser);
+        console.log('Local user match:', localUser ? 'yes' : 'no');
 
         if (localUser && localUser.password === password) {
           console.log('Local login successful');

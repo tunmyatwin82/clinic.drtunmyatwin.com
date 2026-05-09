@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { db, type MedicalRecord } from '@/lib/db';
+
+const MEDICAL_RECORD_TYPES: MedicalRecord['type'][] = ['lab_result', 'imaging', 'report', 'prescription', 'other'];
+
+function parseMedicalRecordType(value: string): MedicalRecord['type'] {
+    const normalized = value.trim();
+    return MEDICAL_RECORD_TYPES.includes(normalized as MedicalRecord['type'])
+        ? (normalized as MedicalRecord['type'])
+        : 'other';
+}
 
 // Simple file upload placeholder - implement with your preferred storage
 async function uploadFile(bucket: string, path: string, file: File): Promise<string> {
@@ -34,10 +43,11 @@ export async function GET(request: NextRequest) {
             { success: false, error: 'Patient ID or Record ID is required' },
             { status: 400 }
         );
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error fetching medical records:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
@@ -74,7 +84,7 @@ export async function POST(request: NextRequest) {
             doctor_id: doctorId,
             appointment_id: appointmentId || undefined,
             title,
-            type: type as any,
+            type: parseMedicalRecordType(type),
             description,
             file_url: fileUrl,
             file_name: fileName,
@@ -82,10 +92,11 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json({ success: true, data: record });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error creating medical record:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
@@ -131,10 +142,11 @@ export async function DELETE(request: NextRequest) {
 
         await db.medicalRecords.delete(id);
         return NextResponse.json({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error deleting medical record:', error);
+        const message = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: message },
             { status: 500 }
         );
     }
