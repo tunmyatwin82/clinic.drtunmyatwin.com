@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html class="light" lang="my"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ငွေပေးချေမှု အောင်မြင်ပါသည် | CarePulse</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Noto+Sans+Myanmar:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#ffffff",
+                    "background": "#faf9ff",
+                    "primary": "#003d9b",
+                    "on-tertiary-fixed-variant": "#3e4853",
+                    "surface-container-low": "#f1f3ff",
+                    "on-secondary-fixed": "#002113",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#051a3e",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed-variant": "#0040a2",
+                    "inverse-surface": "#1d3054",
+                    "surface-variant": "#d8e2ff",
+                    "on-primary-fixed": "#001848",
+                    "surface-container-highest": "#d8e2ff",
+                    "on-tertiary-fixed": "#131c27",
+                    "on-secondary-container": "#00734c",
+                    "surface-container-high": "#e1e8ff",
+                    "secondary-fixed-dim": "#65dca4",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#82f9be",
+                    "on-primary-container": "#c4d2ff",
+                    "surface-container": "#e9edff",
+                    "on-surface": "#051a3e",
+                    "inverse-on-surface": "#edf0ff",
+                    "on-primary": "#ffffff",
+                    "primary-fixed-dim": "#b2c5ff",
+                    "on-tertiary-container": "#cad4e3",
+                    "inverse-primary": "#b2c5ff",
+                    "outline-variant": "#c3c6d6",
+                    "surface": "#faf9ff",
+                    "tertiary-container": "#525c68",
+                    "tertiary": "#3b4450",
+                    "primary-fixed": "#dae2ff",
+                    "surface-bright": "#faf9ff",
+                    "on-surface-variant": "#434654",
+                    "tertiary-fixed": "#d9e3f2",
+                    "outline": "#737685",
+                    "surface-dim": "#ccdaff",
+                    "secondary": "#006c47",
+                    "tertiary-fixed-dim": "#bdc7d6",
+                    "error": "#ba1a1a",
+                    "on-tertiary": "#ffffff",
+                    "primary-container": "#0052cc",
+                    "secondary-container": "#82f9be",
+                    "surface-tint": "#0c56d0",
+                    "on-secondary-fixed-variant": "#005235"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "max_width": "1280px",
+                    "lg": "40px",
+                    "xs": "4px",
+                    "md": "24px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "xl": "64px",
+                    "sm": "12px",
+                    "margin": "32px"
+            },
+            "fontFamily": {
+                    "h3": ["Inter", "Noto Sans Myanmar"],
+                    "h2": ["Inter", "Noto Sans Myanmar"],
+                    "button": ["Inter", "Noto Sans Myanmar"],
+                    "body-lg": ["Inter", "Noto Sans Myanmar"],
+                    "label-caps": ["Inter", "Noto Sans Myanmar"],
+                    "body-md": ["Inter", "Noto Sans Myanmar"],
+                    "h1": ["Inter", "Noto Sans Myanmar"]
+            },
+            "fontSize": {
+                    "h3": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "h2": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "button": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "h1": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', 'Noto Sans Myanmar', sans-serif;
+            background-color: #faf9ff;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .success-checkmark {
+            animation: grow 0.5s ease-out forwards;
+        }
+        @keyframes grow {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="bg-surface shadow-[0_4px_12px_rgba(0,82,204,0.08)] sticky top-0 z-50">
+<div class="flex justify-between items-center px-margin py-4 w-full max-w-max_width mx-auto">
+<div class="font-h3 text-h3 font-bold text-primary">CarePulse</div>
+<nav class="hidden md:flex items-center space-gap gap-gutter">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Find Doctors</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Services</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Consultations</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">My Dashboard</a>
+</nav>
+<div class="flex items-center gap-sm">
+<img alt="Patient profile avatar" class="w-10 h-10 rounded-full border-2 border-primary-fixed" data-alt="A professional and friendly portrait of a person with a neutral background, styled in a clean, high-key clinical light-mode aesthetic with soft blue ambient shadows and high clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkop6kSXPCuIHdNPC5L8seKu92lVqpXbuF9po6d7e9BMH2lQ3pS1LwtcoqfcpXE12L-HPk-VM3BMlFznhkJ9GM0B2vyFWPMSxIqQNdfN3Qig7X01JB9gavLLbMDFpk93i1pty04pvXf2V9wxuzHPimaEzqPLIIJgvhYBRGfLd7zmdrYZZOif2WVEAeSSq8NLM7zzuQFKbQxAnwcDdff_ZgQup1Q0XZMj5ehmUM6z5hT1y458musAFCfpjwRMS3aYeY45z9qH2VidXQ"/>
+</div>
+</div>
+</header>
+<main class="max-w-3xl mx-auto px-margin py-xl flex flex-col items-center">
+<!-- Success State Header -->
+<div class="text-center mb-xl">
+<div class="inline-flex items-center justify-center w-24 h-24 bg-secondary-container text-secondary rounded-full mb-md success-checkmark">
+<span class="material-symbols-outlined !text-[48px]" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h1 class="font-h1 text-h1 text-on-surface mb-xs">ငွေပေးချေမှု အောင်မြင်ပါသည်</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">ဆရာဝန်နှင့် ဆွေးနွေးမှုအတွက် ရက်ချိန်းကို အတည်ပြုပြီးပါပြီ။</p>
+</div>
+<!-- Transaction Detail Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)] p-md mb-lg border border-surface-container">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-y-md border-b border-surface-container pb-md">
+<div>
+<p class="font-label-caps text-label-caps text-outline uppercase mb-xs">Transaction ID</p>
+<p class="font-h3 text-h3 text-on-surface">CP-98231</p>
+</div>
+<div class="md:text-right">
+<p class="font-label-caps text-label-caps text-outline uppercase mb-xs">Date and Time</p>
+<p class="font-body-md text-body-md text-on-surface">Oct 20, 2024, 11:15 AM</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-y-md pt-md">
+<div>
+<p class="font-label-caps text-label-caps text-outline uppercase mb-xs">Amount Paid</p>
+<p class="font-h3 text-h3 text-secondary">$130.00 / ၃၉၀,၀၀၀ ကျပ်</p>
+</div>
+<div class="md:text-right">
+<p class="font-label-caps text-label-caps text-outline uppercase mb-xs">Payment Method</p>
+<div class="flex items-center md:justify-end gap-xs">
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+<p class="font-body-md text-body-md text-on-surface">KBZPay / Card</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Next Steps Section -->
+<div class="w-full bg-surface-container-low rounded-xl p-md mb-xl">
+<h3 class="font-h3 text-h3 text-on-surface mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">info</span>
+                နောက်ထပ် လုပ်ဆောင်ရန်များ
+            </h3>
+<ul class="space-y-sm">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary mt-1">send</span>
+<p class="font-body-md text-body-md text-on-surface-variant">ဆွေးနွေးမှုမစတင်မီ ၁၅ မိနစ်အလိုတွင် link ကို ပေးပို့ပေးပါမည်။</p>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary mt-1">history_edu</span>
+<p class="font-body-md text-body-md text-on-surface-variant">ဆေးမှတ်တမ်းများကို dashboard တွင် ပြန်လည်ကြည့်ရှုနိုင်ပါသည်။</p>
+</li>
+</ul>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-gutter w-full sm:w-auto">
+<button class="bg-primary-container text-on-primary font-button text-button px-xl py-4 rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-md">
+                Dashboard သို့ သွားရန်
+            </button>
+<button class="bg-surface border border-outline-variant text-primary font-button text-button px-xl py-4 rounded-lg hover:bg-surface-container-low active:scale-95 transition-all">
+                ဆေးမှတ်တမ်းကြည့်ရန်
+            </button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-inverse-surface mt-xl">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin py-xl w-full max-w-max_width mx-auto">
+<div class="col-span-1 md:col-span-1">
+<div class="font-h3 text-h3 font-bold text-primary mb-md">CarePulse</div>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 CarePulse Health. Professional Care, Anywhere.</p>
+</div>
+<div>
+<h4 class="font-label-caps text-label-caps text-on-surface font-bold mb-md uppercase">Company</h4>
+<ul class="space-y-sm">
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">About Us</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Support</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-caps text-label-caps text-on-surface font-bold mb-md uppercase">Legal</h4>
+<ul class="space-y-sm">
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-caps text-label-caps text-on-surface font-bold mb-md uppercase">Help</h4>
+<ul class="space-y-sm">
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Emergency Protocol</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</body></html>

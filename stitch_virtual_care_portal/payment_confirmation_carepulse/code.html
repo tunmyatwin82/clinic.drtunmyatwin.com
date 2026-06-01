@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#002113",
+                    "on-background": "#051a3e",
+                    "on-tertiary-fixed-variant": "#3e4853",
+                    "inverse-on-surface": "#edf0ff",
+                    "surface-variant": "#d8e2ff",
+                    "surface-container-low": "#f1f3ff",
+                    "on-surface-variant": "#434654",
+                    "surface": "#faf9ff",
+                    "on-primary-fixed": "#001848",
+                    "on-tertiary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#0052cc",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#00734c",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#82f9be",
+                    "outline-variant": "#c3c6d6",
+                    "surface-container-high": "#e1e8ff",
+                    "surface-tint": "#0c56d0",
+                    "on-tertiary-fixed": "#131c27",
+                    "secondary": "#006c47",
+                    "secondary-fixed": "#82f9be",
+                    "on-surface": "#051a3e",
+                    "tertiary-fixed": "#d9e3f2",
+                    "on-tertiary-container": "#cad4e3",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#1d3054",
+                    "surface-container": "#e9edff",
+                    "tertiary-fixed-dim": "#bdc7d6",
+                    "surface-bright": "#faf9ff",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#b2c5ff",
+                    "tertiary-container": "#525c68",
+                    "surface-dim": "#ccdaff",
+                    "primary-fixed-dim": "#b2c5ff",
+                    "primary-fixed": "#dae2ff",
+                    "on-secondary-fixed-variant": "#005235",
+                    "outline": "#737685",
+                    "surface-container-highest": "#d8e2ff",
+                    "primary": "#003d9b",
+                    "background": "#faf9ff",
+                    "tertiary": "#3b4450",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#c4d2ff",
+                    "secondary-fixed-dim": "#65dca4",
+                    "on-primary-fixed-variant": "#0040a2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "base": "8px",
+                    "md": "24px",
+                    "margin": "32px",
+                    "gutter": "24px",
+                    "xl": "64px",
+                    "sm": "12px",
+                    "max_width": "1280px",
+                    "lg": "40px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Inter"],
+                    "body-md": ["Inter"],
+                    "h2": ["Inter"],
+                    "button": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "h3": ["Inter"],
+                    "h1": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "h2": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "button": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "h3": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "h1": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-inverse-surface shadow-[0_4px_12px_rgba(0,82,204,0.08)] sticky top-0 z-50">
+<nav class="flex justify-between items-center px-margin py-4 w-full max-w-max_width mx-auto">
+<div class="flex items-center gap-base">
+<span class="font-h3 text-h3 font-bold text-primary dark:text-inverse-primary">CarePulse</span>
+</div>
+<div class="hidden md:flex items-center gap-lg">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Find Doctors</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Services</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Consultations</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">My Dashboard</a>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">search</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="Patient profile avatar" class="w-full h-full object-cover" data-alt="A professional close-up headshot of a friendly man with a warm smile, styled in a minimalist and clean aesthetic. The background is a soft, out-of-focus clinical blue, reflecting a modern healthcare environment. The lighting is soft and even, highlighting a trustworthy and approachable persona for a medical portal user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKQsVjmSry_KIFEmFsZ62gZs1C_Bd9LYo4oQO-Sz495r1PNPrmgBO-a85EML8MY3l4kO40hpo-kuNQWdvYBnzRgLlbaBPfaDhu-Fq_jC2PlyythvFHIWrlQ5_29p_K5QJenamYn6sGhJQ_cHnMMxTyJ-rdPmsxUbsOr4zPJ8Cv3cFEWAdiIc3vfH-yeY-5ubCH1fG5ltmKlCLl2YZYpKHj0NK6QHrl3EPWsz8824-8ydw-rSa9Ihqdgga4YsLoTnPj-2j11768Ng7a"/>
+</div>
+</div>
+</nav>
+</header>
+<main class="max-w-max_width mx-auto px-margin py-xl">
+<!-- Back Action -->
+<div class="mb-lg">
+<button class="flex items-center gap-xs text-primary font-button text-button hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">arrow_back</span>
+                Back to Appointment Details
+            </button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Left Column: Summary & Payment -->
+<div class="lg:col-span-7 space-y-lg">
+<section>
+<h1 class="font-h1 text-h1 text-on-background mb-base">Payment Confirmation</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Review your consultation details and select a secure payment method to finalize your appointment.</p>
+</section>
+<!-- Appointment Card (Asymmetric Layout Inspiration) -->
+<div class="bg-surface-container-low rounded-xl p-md shadow-sm border border-outline-variant flex flex-col md:flex-row gap-md">
+<div class="w-24 h-24 rounded-lg overflow-hidden shrink-0">
+<img alt="Dr. Julian Thorne" class="w-full h-full object-cover" data-alt="A professional portrait of Dr. Julian Thorne, a senior male physician with a kind expression, wearing a clean white lab coat and a stethoscope. The setting is a brightly lit, high-end medical office with modern wooden accents and soft blue ambient lighting. The photography style is sharp, clean, and evokes professional empathy and medical excellence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvAnziGA-sGaE2--6iW7uAC0v8mL2F1pMjTYLE3gHRlcA5xGNCACjL87K5D78NZcPUEtSvhNdjugjU5KyAzVnoaOfWa9EktIjiKHPTY7knEUUXBHlFHTFfFQvJdo13cMG5SUf12Hp6C9pybrPfupIxOG2Y8KjtKP5DR98eP8ZIGl3DrBv6OnQWIZU3Wt0UBnukWQG7ZvwEZVq8vM1a6n7TA01ej9h_63mwTS3piXjKuWjZLhMXO6eRie6NoHfqM-S-Y8zwtV7nOxOD"/>
+</div>
+<div class="flex-grow flex flex-col justify-center">
+<span class="text-primary font-label-caps text-label-caps mb-xs uppercase tracking-wider">Upcoming Consultation</span>
+<h2 class="font-h3 text-h3 text-on-background">Dr. Julian Thorne</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Senior Cardiologist • General Checkup</p>
+<div class="flex flex-wrap gap-md mt-sm">
+<div class="flex items-center gap-xs text-on-surface">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="font-body-md text-body-md">Oct 20, 2024</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">schedule</span>
+<span class="font-body-md text-body-md">11:15 AM (GMT-5)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Payment Methods (Bento-style Grid selection) -->
+<section class="space-y-md">
+<h3 class="font-h3 text-h3 text-on-background">Payment Method</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Credit Card Option -->
+<div class="relative cursor-pointer group">
+<input checked="" class="peer hidden" id="cc" name="payment" type="radio"/>
+<label class="block p-md bg-surface border-2 border-outline-variant rounded-xl peer-checked:border-primary peer-checked:bg-primary-fixed group-hover:border-primary/50 transition-all" for="cc">
+<div class="flex justify-between items-start mb-sm">
+<span class="material-symbols-outlined text-primary text-3xl">credit_card</span>
+<div class="w-5 h-5 rounded-full border-2 border-outline-variant peer-checked:border-primary flex items-center justify-center">
+<div class="w-2.5 h-2.5 rounded-full bg-primary hidden peer-checked:block"></div>
+</div>
+</div>
+<span class="font-button text-button block mb-xs">Credit or Debit Card</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Visa, Mastercard, Amex</span>
+</label>
+</div>
+<!-- Mobile Wallet Option -->
+<div class="relative cursor-pointer group">
+<input class="peer hidden" id="wallet" name="payment" type="radio"/>
+<label class="block p-md bg-surface border-2 border-outline-variant rounded-xl peer-checked:border-primary peer-checked:bg-primary-fixed group-hover:border-primary/50 transition-all" for="wallet">
+<div class="flex justify-between items-start mb-sm">
+<span class="material-symbols-outlined text-primary text-3xl">account_balance_wallet</span>
+<div class="w-5 h-5 rounded-full border-2 border-outline-variant peer-checked:border-primary flex items-center justify-center">
+<div class="w-2.5 h-2.5 rounded-full bg-primary hidden peer-checked:block"></div>
+</div>
+</div>
+<span class="font-button text-button block mb-xs">Mobile Wallet</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Apple Pay, Google Pay</span>
+</label>
+</div>
+</div>
+<!-- Card Entry Mockup (Glassmorphism card effect) -->
+<div class="mt-md p-md bg-surface-container-low/50 backdrop-blur-sm border border-outline-variant rounded-xl space-y-md">
+<div class="grid grid-cols-1 gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant" for="card_name">CARDHOLDER NAME</label>
+<input class="w-full bg-surface border border-outline-variant focus:ring-2 focus:ring-primary-container p-sm rounded-lg font-body-md outline-none" id="card_name" placeholder="Johnathan Doe" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant" for="card_num">CARD NUMBER</label>
+<div class="relative">
+<input class="w-full bg-surface border border-outline-variant focus:ring-2 focus:ring-primary-container p-sm rounded-lg font-body-md outline-none pr-10" id="card_num" placeholder="0000 0000 0000 0000" type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline">lock</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant" for="expiry">EXPIRY DATE</label>
+<input class="w-full bg-surface border border-outline-variant focus:ring-2 focus:ring-primary-container p-sm rounded-lg font-body-md outline-none" id="expiry" placeholder="MM/YY" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant" for="cvv">CVV</label>
+<input class="w-full bg-surface border border-outline-variant focus:ring-2 focus:ring-primary-container p-sm rounded-lg font-body-md outline-none" id="cvv" placeholder="123" type="text"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Price Breakdown & CTA -->
+<div class="lg:col-span-5">
+<div class="sticky top-24 bg-surface border border-outline-variant rounded-xl p-md shadow-[0_12px_40px_rgba(0,82,204,0.05)]">
+<h3 class="font-h3 text-h3 text-on-background mb-lg">Price Breakdown</h3>
+<div class="space-y-base mb-lg">
+<div class="flex justify-between items-center font-body-md text-body-md">
+<span class="text-on-surface-variant">Consultation Fee</span>
+<span class="text-on-background font-semibold">$120.00</span>
+</div>
+<div class="flex justify-between items-center font-body-md text-body-md">
+<span class="text-on-surface-variant">Service Charge</span>
+<span class="text-on-background font-semibold">$8.50</span>
+</div>
+<div class="flex justify-between items-center font-body-md text-body-md">
+<span class="text-on-surface-variant">Secure Processing</span>
+<span class="text-on-background font-semibold">$1.50</span>
+</div>
+<div class="h-px bg-outline-variant my-md"></div>
+<div class="flex justify-between items-center">
+<span class="font-h3 text-h3 text-on-background">Total</span>
+<span class="font-h3 text-h3 text-primary">$130.00</span>
+</div>
+</div>
+<button class="w-full py-md bg-primary text-on-primary font-button text-button rounded-xl hover:bg-primary-container active:scale-95 transition-all mb-md shadow-lg shadow-primary/20">
+                        Confirm &amp; Pay $130.00
+                    </button>
+<p class="text-center font-label-caps text-label-caps text-on-surface-variant mb-xl">
+                        SSL SECURED ENCRYPTED TRANSACTION
+                    </p>
+<!-- Success State Summary -->
+<div class="bg-surface-container-low rounded-lg p-md border-l-4 border-secondary">
+<div class="flex gap-sm">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">info</span>
+<div class="space-y-xs">
+<p class="font-button text-button text-on-secondary-container">What happens next?</p>
+<ul class="font-body-md text-body-md text-on-surface-variant space-y-xs list-disc ml-4">
+<li>Instant confirmation email &amp; receipt.</li>
+<li>Dr. Julian Thorne is notified.</li>
+<li>Link to digital waiting room sent 15m before.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Trust Section -->
+<section class="mt-xl pt-xl border-t border-outline-variant">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg text-center">
+<div class="flex flex-col items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-4xl mb-xs">verified_user</span>
+<h4 class="font-button text-button">HIPAA Compliant</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Your medical and payment data are strictly encrypted.</p>
+</div>
+<div class="flex flex-col items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-4xl mb-xs">event_available</span>
+<h4 class="font-button text-button">Flexible Rescheduling</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Cancel or reschedule for free up to 24 hours prior.</p>
+</div>
+<div class="flex flex-col items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-4xl mb-xs">support_agent</span>
+<h4 class="font-button text-button">24/7 Support</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Our care team is always here to assist your journey.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-inverse-surface mt-xl">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin py-xl w-full max-w-max_width mx-auto">
+<div class="col-span-1 md:col-span-1">
+<span class="font-h3 text-h3 font-bold text-primary dark:text-inverse-primary">CarePulse</span>
+<p class="font-body-md text-body-md text-on-surface-variant mt-sm">Professional Care, Anywhere.</p>
+</div>
+<div class="flex flex-col gap-base">
+<span class="font-button text-button text-on-background">Explore</span>
+<a class="font-body-md text-body-md text-on-surface-variant hover:underline hover:text-primary-container" href="#">About Us</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:underline hover:text-primary-container" href="#">Contact Support</a>
+</div>
+<div class="flex flex-col gap-base">
+<span class="font-button text-button text-on-background">Legal</span>
+<a class="font-body-md text-body-md text-on-surface-variant hover:underline hover:text-primary-container" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:underline hover:text-primary-container" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-base">
+<span class="font-button text-button text-on-background">Emergency</span>
+<a class="font-body-md text-body-md text-on-surface-variant hover:underline hover:text-primary-container" href="#">Emergency Protocol</a>
+<div class="mt-sm p-sm bg-error-container rounded-lg">
+<p class="text-on-error-container font-label-caps text-label-caps">FOR EMERGENCIES CALL 911</p>
+</div>
+</div>
+</div>
+<div class="max-w-max_width mx-auto px-margin py-base border-t border-outline-variant flex justify-between items-center flex-wrap gap-md">
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 CarePulse Health. Professional Care, Anywhere.</p>
+<div class="flex gap-md">
+<span class="material-symbols-outlined text-outline">language</span>
+<span class="font-body-md text-body-md text-on-surface-variant">English (US)</span>
+</div>
+</div>
+</footer>
+</body></html>

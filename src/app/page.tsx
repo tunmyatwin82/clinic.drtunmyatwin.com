@@ -1,37 +1,46 @@
 'use client';
 
-import { useState, useSyncExternalStore } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
-  Globe,
-  User,
-  Video,
   Calendar,
-  FileText,
-  BadgeCheck,
-  Lock,
-  Headphones,
+  Video,
+  Shield,
   Star,
+  Phone,
+  MessageCircle,
+  ChevronRight,
+  CheckCircle,
   Stethoscope,
-  CheckCircle2,
-  ArrowRight,
+  Globe,
+  Sparkles,
+  Zap,
+  Users,
+  Award,
+  Activity,
+  Target,
+  Lightbulb,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { useLanguage } from '@/lib/LanguageContext';
+import { HeroIntroVideo } from '@/components/HeroIntroVideo';
 
-/** Moonchild.ai–inspired marketing shell: airy type, neutral surfaces, role cards, numbered journey, FAQ — clinic copy via translations. */
+const features = [
+  { icon: Video, key: 'video', color: 'primary' },
+  { icon: Calendar, key: 'scheduling', color: 'secondary' },
+  { icon: Shield, key: 'security', color: 'purple' },
+  { icon: MessageCircle, key: 'followup', color: 'pink' },
+];
 
-const HERO_PORTRAIT_FALLBACK =
-  'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=640&q=82&auto=format&fit=crop';
-
-const TRUST_SECTION_IMG =
-  'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=960&q=82&auto=format&fit=crop';
-
-/** Clinic phone on CTA (local 09… ; tel: uses +95 without leading 0). */
-const CLINIC_PHONE_LOCAL = '09421068582';
-const CLINIC_PHONE_TEL = 'tel:+959421068582';
+const stats = [
+  { icon: Users, value: '10,000+', label: 'လူနာများ' },
+  { icon: Award, value: '15+', label: 'နှစ်အတွေ့အကြုံ' },
+  { icon: Star, value: '5.0', label: 'သုံးသပ်ချက်' },
+  { icon: Activity, value: '24/7', label: 'ဝန်ဆောင်မှု' },
+];
 
 const reviews = [
   { name: 'ဦးအောင်', rating: 5, comment: 'ဒေါက်တာထွန်းမြတ်ဝင်းက ကျွန်တော့်ရောဂါကို စိတ်ရှည်စွာ နားထောင်ပြီး ကောင်းမွန်တဲ့ ကုသမှုပေးပါသည်။ အလွန်ကျေးဇူးတင်ပါတယ်။' },
@@ -39,40 +48,26 @@ const reviews = [
   { name: 'ဦးမင်း', rating: 5, comment: 'ပညာရှင်ဆရာဝန်တစ်ယောက်ဖြစ်တဲ့အတွက် ယုံကြည်လို့ရပါတယ်။ အကြံဉာဏ်တွေကလည်း အရမ်းအသုံးဝင်ပါတယ်။' },
 ];
 
-const focusRing =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background';
-const motionSafePress = 'motion-safe:active:scale-[0.98]';
-const transitionUi = 'transition-[color,transform,box-shadow,background-color] duration-200 motion-reduce:transition-none';
-
-const faqKeys = [
-  { q: 'faq1q' as const, a: 'faq1a' as const },
-  { q: 'faq2q' as const, a: 'faq2a' as const },
-  { q: 'faq3q' as const, a: 'faq3a' as const },
-  { q: 'faq4q' as const, a: 'faq4a' as const },
-];
-
 export default function Home() {
   const router = useRouter();
-  const { isAuthenticated } = useAppStore();
+  const { isAuthenticated, currentUser } = useAppStore();
   const { language, setLanguage, t } = useLanguage();
-  const tc = t.clinical;
-
-  const heroFromEnv = process.env.NEXT_PUBLIC_HERO_PORTRAIT?.trim();
-  const [heroPortraitSrc, setHeroPortraitSrc] = useState(
-    () => heroFromEnv || '/hero-doctor.jpg',
-  );
-
-  const handleHeroPortraitError = () => {
-    setHeroPortraitSrc((current) =>
-      current === HERO_PORTRAIT_FALLBACK ? current : HERO_PORTRAIT_FALLBACK,
-    );
-  };
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const mounted = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  );
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  const navLinks = [
+    { href: '#about', label: t.nav.about },
+    { href: '#how-it-works', label: t.nav.services },
+    { href: '#reviews', label: t.nav.reviews },
+    { href: '#contact', label: t.nav.contact },
+  ];
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleBookConsultation = () => {
     if (isAuthenticated) {
@@ -84,494 +79,400 @@ export default function Home() {
 
   if (!mounted) return null;
 
-  const navItems = [
-    { href: '/#about', label: tc.aboutNav },
-    { href: '/#services', label: t.nav.services },
-    { href: '/#journey', label: tc.navConsult },
-    { href: '/dashboard', label: tc.navDashboard },
-  ];
-
-  const navLinkClass = `rounded-md px-3 py-2 text-sm font-medium text-muted-foreground ${transitionUi} hover:bg-muted/80 hover:text-foreground`;
-
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background text-foreground antialiased">
-      <a
-        href="#main-content"
-        className={`sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-card focus:px-4 focus:py-3 focus:text-sm focus:font-medium focus:text-foreground focus:shadow-lg ${focusRing}`}
-      >
-        Skip to main content
-      </a>
-
-      <nav
-        className="sticky top-0 z-50 border-b border-border bg-card/95 shadow-[0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md supports-[backdrop-filter]:bg-card/88"
-        aria-label={language === 'en' ? 'Main navigation' : 'မီနူး လမ်းညွှန်'}
-      >
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-14 items-center justify-between gap-3 sm:h-[3.75rem] sm:gap-4">
-            <Link
-              href="/"
-              className={`flex min-w-0 max-w-[65%] shrink-0 items-center gap-2.5 rounded-lg sm:max-w-none ${focusRing}`}
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary sm:h-10 sm:w-10" aria-hidden>
-                <Stethoscope className="h-5 w-5 sm:h-[22px] sm:w-[22px]" strokeWidth={2} />
+    <div className="landing-page min-h-screen overflow-x-hidden">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 drtun-navbar">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-3 min-h-16 md:min-h-20 py-2 md:py-0">
+            <a href="#" className="flex items-center gap-2 sm:gap-3 min-w-0 shrink">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/30">
+                <Stethoscope className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900" />
+              </div>
+              <span className="text-sm sm:text-xl font-bold text-slate-100 truncate max-w-[7.5rem] min-[400px]:max-w-[10rem] sm:max-w-none">
+                ဒေါက်တာထွန်းမြတ်ဝင်း
               </span>
-              <span className="truncate text-sm font-semibold tracking-tight text-foreground sm:text-base">
-                {tc.brandLine}
-              </span>
-            </Link>
+            </a>
 
-            <div className="hidden min-w-0 flex-1 items-center justify-center md:flex">
-              <ul className="flex items-center gap-0.5 lg:gap-1">
-                {navItems.map(({ href, label }) => (
-                  <li key={href}>
-                    <Link href={href} className={`${navLinkClass} ${focusRing} inline-flex`}>
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            <div className="hidden md:flex items-center gap-10">
+              {navLinks.map((link) => (
+                <a key={link.href} href={link.href} className="nav-link">
+                  {link.label}
+                </a>
+              ))}
             </div>
 
-            <div className="flex shrink-0 items-center gap-2 border-l border-border/80 pl-2 sm:gap-2.5 sm:pl-3 md:pl-4">
+            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
               <button
                 type="button"
                 onClick={() => setLanguage(language === 'en' ? 'my' : 'en')}
-                className={`inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground sm:min-w-0 sm:gap-1.5 sm:px-3 ${transitionUi} ${focusRing} cursor-pointer`}
-                aria-label={language === 'en' ? 'Switch language to Myanmar' : 'Switch language to English'}
+                className="btn-link btn-link--icon"
+                aria-label={language === 'en' ? 'Switch to Myanmar' : 'Switch to English'}
               >
-                <Globe className="h-[18px] w-[18px] shrink-0 sm:h-4 sm:w-4" aria-hidden />
-                <span className="hidden text-xs font-medium sm:inline sm:text-sm">
-                  {language === 'en' ? 'မြန်မာ' : 'English'}
-                </span>
+                <Globe className="w-4 h-4 shrink-0" />
+                <span className="hidden sm:inline">{language === 'en' ? 'မြန်မာ' : 'English'}</span>
               </button>
 
               {isAuthenticated ? (
-                <Link
-                  href="/dashboard"
-                  className={`inline-flex min-h-10 items-center justify-center whitespace-nowrap rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 ${motionSafePress} ${transitionUi} ${focusRing}`}
-                >
+                <Link href="/dashboard" className="btn-primary btn-primary--compact whitespace-nowrap">
                   {t.nav.dashboard}
                 </Link>
               ) : (
-                <div className="flex flex-wrap items-center justify-end gap-1.5 sm:flex-nowrap sm:gap-2">
-                  <Link
-                    href="/login"
-                    className={`hidden min-h-10 items-center whitespace-nowrap rounded-lg px-3 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground sm:inline-flex ${transitionUi} ${focusRing}`}
-                  >
-                    {tc.signIn}
-                  </Link>
-                  <Link
-                    href="/register"
-                    className={`inline-flex min-h-10 min-w-0 items-center justify-center rounded-lg border border-border bg-background px-3 text-sm font-semibold leading-snug text-foreground shadow-sm hover:border-primary/40 hover:bg-muted/50 sm:px-4 ${motionSafePress} ${transitionUi} ${focusRing}`}
-                  >
-                    {tc.signUpNav}
+                <>
+                  <Link href="/login" className="nav-link hidden md:inline-flex">
+                    {t.nav.login}
                   </Link>
                   <button
                     type="button"
                     onClick={handleBookConsultation}
-                    className={`inline-flex min-h-10 min-w-0 items-center justify-center rounded-lg bg-secondary px-3 text-sm font-semibold leading-snug text-secondary-foreground shadow-sm hover:bg-secondary/90 sm:px-4 ${motionSafePress} ${transitionUi} ${focusRing} cursor-pointer`}
+                    className="btn-primary btn-primary--compact flex items-center gap-1.5 whitespace-nowrap"
                   >
+                    <Sparkles className="w-4 h-4 shrink-0" />
+                    <span className="hidden min-[400px]:inline">{t.hero.bookAppointment}</span>
+                    <span className="min-[400px]:hidden">ချိန်း</span>
+                  </button>
+                </>
+              )}
+
+              <button
+                type="button"
+                className="md:hidden mobile-menu-toggle"
+                onClick={() => setMobileMenuOpen((open) => !open)}
+                aria-expanded={mobileMenuOpen}
+                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          {mobileMenuOpen && (
+            <div className="md:hidden mobile-nav-panel pb-4">
+              <div className="flex flex-col gap-1">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="mobile-nav-link"
+                    onClick={closeMobileMenu}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+              {!isAuthenticated && (
+                <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-3">
+                  <Link href="/login" className="mobile-nav-link" onClick={closeMobileMenu}>
+                    {t.nav.login}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeMobileMenu();
+                      handleBookConsultation();
+                    }}
+                    className="btn-primary w-full flex items-center justify-center gap-2"
+                  >
+                    <Calendar className="w-5 h-5" />
                     {t.hero.bookAppointment}
                   </button>
                 </div>
               )}
             </div>
-          </div>
-
-          <div className="border-t border-border/60 md:hidden">
-            <ul className="-mx-1 flex gap-0.5 overflow-x-auto overscroll-x-contain py-2 pt-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {navItems.map(({ href, label }) => (
-                <li key={href} className="shrink-0">
-                  <Link href={href} className={`${navLinkClass} ${focusRing} inline-flex`}>
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          )}
         </div>
       </nav>
 
-      <main id="main-content" tabIndex={-1} className="outline-none">
-        {/* Hero — Moonchild-style centered headline */}
-        <section id="about" className="relative px-4 pb-16 pt-14 sm:px-6 sm:pb-24 sm:pt-20 lg:pt-24">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(255,255,255,0.07),transparent)]" aria-hidden />
-          <div className="relative mx-auto max-w-3xl text-center">
-            <h1 className="text-pretty text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl sm:leading-[1.06] md:text-6xl">
-              {tc.heroTitle}
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {tc.heroSubhead}
-            </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-              <button
-                type="button"
-                onClick={handleBookConsultation}
-                className={`inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-3 text-center text-sm font-medium leading-snug text-primary-foreground whitespace-normal shadow-lg shadow-primary/25 hover:bg-primary/90 sm:w-auto sm:text-[15px] ${motionSafePress} ${transitionUi} ${focusRing} cursor-pointer`}
-              >
-                {tc.heroCtaPrimary}
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </button>
-              <Link
-                href="/#journey"
-                className={`inline-flex min-h-12 w-full items-center justify-center rounded-full border border-border bg-card px-8 text-sm font-medium text-foreground hover:bg-muted/60 sm:w-auto sm:text-[15px] ${transitionUi} ${focusRing}`}
-              >
-                {tc.moonHeroSecondaryCta}
-              </Link>
-            </div>
-            <ul className="mx-auto mt-12 max-w-xl space-y-3 text-left text-[15px] leading-relaxed text-foreground sm:text-base">
-              {tc.heroChecklistLines.map((line, i) => (
-                <li key={i} className="flex gap-3">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-secondary" strokeWidth={2} aria-hidden />
-                  <span className="text-pretty">{line}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-10 text-sm text-muted-foreground">{tc.heroFooterLine}</p>
-          </div>
-
-          <div className="relative mx-auto mt-16 max-w-lg sm:mt-20 lg:mt-24 lg:max-w-xl">
-            <figure className="relative isolate overflow-hidden rounded-3xl border border-border bg-muted shadow-2xl shadow-black/35">
-              <div className="relative aspect-[4/5] w-full sm:aspect-[3/4]">
-                <Image
-                  src={heroPortraitSrc}
-                  alt={tc.heroPortraitAlt}
-                  fill
-                  className="object-cover object-[50%_18%]"
-                  sizes="(max-width: 1024px) 90vw, 480px"
-                  priority
-                  onError={handleHeroPortraitError}
-                />
+      {/* Hero Section */}
+      <section className="pt-24 md:pt-32 pb-12 md:pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="hero__bg-orbs" aria-hidden>
+          <div className="hero__orb hero__orb--1" />
+          <div className="hero__orb hero__orb--2" />
+          <div className="hero__orb hero__orb--3" />
+        </div>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            <div className="order-2 lg:order-1 animate-fade-in min-w-0">
+              <div className="badge-gold mb-5 md:mb-8 text-xs sm:text-sm">
+                <Zap className="w-4 h-4 shrink-0" />
+                {t.hero.onlineConsultation}
               </div>
-            </figure>
-          </div>
-        </section>
-
-        {/* Role cards — "Built for every role" rhythm */}
-        <section className="px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-6xl">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {tc.moonRolesTitle}
+              <h1 className="myanmar-heading text-[1.625rem] leading-snug sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-100">
+                {t.hero.title}
+              </h1>
+              <h2 className="myanmar-heading text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold hero-title-gradient mt-2 leading-snug">
+                {t.hero.subtitle}
               </h2>
-              <p className="mt-4 text-pretty text-base text-muted-foreground sm:text-lg">
-                {tc.moonRolesSubtitle}
+              <p className="myanmar-text mt-4 md:mt-6 text-base sm:text-lg text-slate-400 leading-relaxed max-w-xl">
+                {t.hero.description}
               </p>
-            </div>
-            <div className="mt-14 grid gap-6 md:grid-cols-3">
-              {[
-                {
-                  title: tc.moonR1Title,
-                  hook: tc.moonR1Hook,
-                  desc: tc.moonR1Desc,
-                  cta: tc.moonR1Cta,
-                  onClick: handleBookConsultation,
-                  href: null as string | null,
-                },
-                {
-                  title: tc.moonR2Title,
-                  hook: tc.moonR2Hook,
-                  desc: tc.moonR2Desc,
-                  cta: tc.moonR2Cta,
-                  onClick: null as (() => void) | null,
-                  href: '/#journey',
-                },
-                {
-                  title: tc.moonR3Title,
-                  hook: tc.moonR3Hook,
-                  desc: tc.moonR3Desc,
-                  cta: tc.moonR3Cta,
-                  onClick: null,
-                  href: '/register',
-                },
-              ].map((card, idx) => (
-                <div
-                  key={idx}
-                  className="group flex flex-col rounded-2xl border border-border bg-card p-8 shadow-sm transition-shadow hover:shadow-md"
-                >
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{card.hook}</p>
-                  <h3 className="mt-3 text-xl font-semibold tracking-tight text-foreground">{card.title}</h3>
-                  <p className="mt-3 flex-1 text-[15px] leading-relaxed text-muted-foreground">{card.desc}</p>
-                  {card.href ? (
-                    <Link
-                      href={card.href}
-                      className={`mt-8 inline-flex items-center gap-1 text-sm font-semibold text-foreground group-hover:gap-2 ${transitionUi} ${focusRing} rounded`}
-                    >
-                      {card.cta}
-                      <ArrowRight className="h-4 w-4" aria-hidden />
-                    </Link>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={card.onClick ?? undefined}
-                      className={`mt-8 inline-flex w-fit items-center gap-1 text-left text-sm font-semibold text-foreground group-hover:gap-2 ${transitionUi} ${focusRing} rounded cursor-pointer`}
-                    >
-                      {card.cta}
-                      <ArrowRight className="h-4 w-4" aria-hidden />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Numbered journey */}
-        <section id="journey" className="border-t border-border bg-card px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-6xl">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {tc.moonJourneyTitle}
-              </h2>
-              <p className="mt-4 text-muted-foreground">{tc.moonJourneySubtitle}</p>
-            </div>
-            <div className="mt-16 grid gap-10 md:grid-cols-3 md:gap-8">
-              {[
-                { label: tc.moonS1Label, title: tc.moonS1Title, desc: tc.moonS1Desc },
-                { label: tc.moonS2Label, title: tc.moonS2Title, desc: tc.moonS2Desc },
-                { label: tc.moonS3Label, title: tc.moonS3Title, desc: tc.moonS3Desc },
-              ].map((step) => (
-                <div key={step.label} className="relative">
-                  <span className="text-5xl font-semibold tabular-nums tracking-tight text-primary/20">{step.label}</span>
-                  <h3 className="mt-4 text-lg font-semibold text-foreground">{step.title}</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{step.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Services */}
-        <section id="services" className="px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-6xl">
-            <div className="text-center">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{tc.servicesKicker}</span>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {tc.servicesHeading}
-              </h2>
-            </div>
-            <div className="mt-14 grid gap-6 md:grid-cols-3">
-              <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground" aria-hidden>
-                  <Video className="h-6 w-6" strokeWidth={2} />
-                </div>
-                <p className="text-pretty text-[15px] font-medium leading-relaxed text-foreground">{tc.svcVirtualLine}</p>
+              <div className="mt-6 md:mt-10">
+                <button onClick={handleBookConsultation} className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto">
+                  <Calendar className="w-5 h-5" />
+                  {t.hero.bookAppointment}
+                </button>
               </div>
-              <div className="rounded-2xl border border-primary bg-primary p-8 shadow-lg">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-card text-primary" aria-hidden>
-                  <Calendar className="h-6 w-6" strokeWidth={2} />
-                </div>
-                <p className="text-pretty text-[15px] font-medium leading-relaxed text-primary-foreground/95">{tc.svcBookingLine}</p>
-              </div>
-              <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground" aria-hidden>
-                  <FileText className="h-6 w-6" strokeWidth={2} />
-                </div>
-                <p className="text-pretty text-[15px] font-medium leading-relaxed text-foreground">{tc.svcRxLine}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Trust */}
-        <section id="consult" className="border-y border-border bg-muted/80 px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-20">
-            <div className="relative order-2 overflow-hidden rounded-2xl border border-border bg-card shadow-sm lg:order-1">
-              <Image
-                src={TRUST_SECTION_IMG}
-                alt=""
-                aria-labelledby="trust-heading"
-                width={640}
-                height={480}
-                className="aspect-[4/3] h-full w-full object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </div>
-            <div className="order-1 lg:order-2">
-              <h2 id="trust-heading" className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {tc.trustHeading}
-              </h2>
-              <div className="mt-10 space-y-8">
-                {[
-                  { icon: BadgeCheck, title: tc.trust1Title, desc: tc.trust1Desc },
-                  { icon: Lock, title: tc.trust2Title, desc: tc.trust2Desc },
-                  { icon: Headphones, title: tc.trust3Title, desc: tc.trust3Desc },
-                ].map((item, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="flex h-11 min-h-11 w-11 min-w-11 shrink-0 items-center justify-center rounded-full bg-card text-foreground shadow-sm ring-1 ring-border" aria-hidden>
-                      <item.icon className="h-5 w-5" strokeWidth={2} />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-foreground">{item.title}</h4>
-                      <p className="mt-1 text-[15px] leading-relaxed text-muted-foreground">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Testimonials */}
-        <section id="reviews" className="px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-6xl">
-            <div className="text-center">
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {tc.testimonialsHeading}
-              </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">{t.reviews.subtitle}</p>
-            </div>
-            <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {reviews.map((review, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col rounded-2xl border border-border bg-card p-8 shadow-sm"
-                >
-                  <div className="mb-6 flex items-center gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground" aria-hidden>
-                      {review.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-foreground">{review.name}</p>
-                      <div className="flex text-secondary" aria-label={`${review.rating} out of 5 stars`}>
-                        {[1, 2, 3, 4, 5].map((i) => (
-                          <Star key={i} className={`h-4 w-4 ${i <= review.rating ? 'fill-secondary text-secondary' : 'text-border'}`} aria-hidden />
-                        ))}
+              <div className="mt-8 md:mt-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex -space-x-2 sm:-space-x-3 shrink-0">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div
+                        key={i}
+                        className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-sky-300 border-2 sm:border-[3px] border-white flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-lg ${i > 4 ? 'hidden min-[400px]:flex' : i > 3 ? 'hidden min-[360px]:flex' : ''}`}
+                      >
+                        {String.fromCharCode(64 + i)}
                       </div>
-                    </div>
+                    ))}
                   </div>
-                  <p className="flex-1 text-pretty text-[15px] leading-relaxed text-foreground">&ldquo;{review.comment}&rdquo;</p>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <span className="text-slate-400 text-xs sm:text-sm font-medium">{t.hero.rating}</span>
+                  </div>
                 </div>
-              ))}
+                <div className="hidden sm:block h-12 w-px bg-slate-700 shrink-0" />
+                <div className="flex items-center gap-2 text-slate-400 text-sm sm:text-base">
+                  <Shield className="w-5 h-5 text-emerald-500 shrink-0" />
+                  <span className="font-medium">{language === 'my' ? 'လုံခြုံပြီး သီးသန့်သော' : 'Secure & Private'}</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </section>
-
-        {/* FAQ — Moonchild "Questions, answered" */}
-        <section className="border-t border-border bg-card px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-2xl">
-            <h2 className="text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              {tc.faqTitle}
-            </h2>
-            <div className="mt-12 divide-y divide-border rounded-2xl border border-border bg-muted/50">
-              {faqKeys.map((item) => (
-                <details key={item.q} className="group px-6 py-5 [&_summary::-webkit-details-marker]:hidden">
-                  <summary className={`flex cursor-pointer list-none items-center justify-between gap-4 text-left text-[15px] font-semibold text-foreground ${focusRing} rounded-lg`}>
-                    {tc[item.q]}
-                    <span className="text-muted-foreground transition group-open:rotate-180">▼</span>
-                  </summary>
-                  <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">{tc[item.a]}</p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="bg-coal px-4 py-20 text-primary-foreground sm:px-6 sm:py-28" aria-labelledby="cta-heading">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 id="cta-heading" className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              {t.cta.title}
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-primary-foreground/85 sm:text-lg">{t.cta.subtitle}</p>
-            <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:justify-center">
-              <button
-                type="button"
-                onClick={handleBookConsultation}
-                className={`inline-flex min-h-12 w-full items-center justify-center rounded-full bg-secondary px-6 py-3 text-center text-base font-semibold leading-snug text-secondary-foreground shadow-md whitespace-normal hover:bg-secondary/90 sm:w-auto sm:px-8 sm:text-[15px] ${motionSafePress} ${transitionUi} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-coal cursor-pointer`}
-              >
-                {t.cta.bookNow}
-              </button>
-              <a
-                href={CLINIC_PHONE_TEL}
-                className={`inline-flex min-h-12 items-center justify-center rounded-full border-2 border-primary-foreground/50 px-8 text-sm font-semibold text-primary-foreground hover:bg-primary-foreground/10 ${transitionUi} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-coal`}
-                aria-label={`${t.cta.callNow}: ${CLINIC_PHONE_LOCAL}`}
-              >
-                <span className="flex flex-col items-center sm:flex-row sm:gap-2">
-                  <span>{t.cta.callNow}</span>
-                  <span className="tabular-nums text-base font-bold tracking-wide">{CLINIC_PHONE_LOCAL}</span>
-                </span>
-              </a>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer id="contact" className="border-t border-border bg-background pt-16 pb-10">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 sm:px-6 md:grid-cols-4 md:gap-12">
-          <div className="md:col-span-1">
-            <div className="text-lg font-semibold text-foreground">{tc.brandLine}</div>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{tc.footerBlurb}</p>
-          </div>
-          <div>
-            <h5 className="text-sm font-semibold text-foreground">{tc.footerCompany}</h5>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/#about" className={`hover:text-foreground ${transitionUi} ${focusRing} rounded`}>{tc.aboutNav}</Link></li>
-              <li><Link href="/#services" className={`hover:text-foreground ${transitionUi} ${focusRing} rounded`}>{t.nav.services}</Link></li>
-              <li><Link href="/booking" className={`hover:text-foreground ${transitionUi} ${focusRing} rounded`}>{t.hero.bookAppointment}</Link></li>
-              <li><Link href="/login" className={`hover:text-foreground ${transitionUi} ${focusRing} rounded`}>{tc.signIn}</Link></li>
-              <li><Link href="/register" className={`hover:text-foreground ${transitionUi} ${focusRing} rounded`}>{tc.signUpNav}</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h5 className="text-sm font-semibold text-foreground">{tc.footerLegal}</h5>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><span className="opacity-70">Privacy</span></li>
-              <li><span className="opacity-70">Terms</span></li>
-            </ul>
-          </div>
-          <div>
-            <h5 className="text-sm font-semibold text-foreground">{tc.footerNewsletter}</h5>
-            <p className="mt-4 text-sm text-muted-foreground">{tc.newsletterHint}</p>
-            <div className="mt-3 flex gap-2">
-              <input
-                className={`min-h-11 w-full rounded-full border border-border bg-card px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${transitionUi}`}
-                placeholder={tc.footerEmailPh}
-                type="email"
-                readOnly
-                aria-label={tc.footerEmailPh}
-              />
-              <button
-                type="button"
-                className={`min-h-11 shrink-0 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 ${transitionUi} ${focusRing} cursor-pointer`}
-              >
-                {tc.footerJoin}
-              </button>
+            <div className="order-1 lg:order-2 w-full min-w-0">
+            <HeroIntroVideo
+              title={
+                language === 'en'
+                  ? 'Dr. Tun Myat Win — introduction video'
+                  : 'ဒေါက်တာထွန်းမြတ်ဝင်း မိတ်ဆက်ဗီဒီယို'
+              }
+            />
             </div>
           </div>
         </div>
-        <div className="mx-auto mt-12 max-w-6xl border-t border-border px-4 pt-8 text-center sm:px-6">
-          <p className="text-sm text-muted-foreground">{tc.copyright}</p>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-10 md:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="glass-card rounded-2xl md:rounded-3xl p-5 sm:p-8 md:p-12">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-8">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center min-w-0 px-1">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-sky-100 rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-4">
+                    <stat.icon className="w-6 h-6 sm:w-8 sm:h-8 text-sky-500" />
+                  </div>
+                  <p className="stat-number">{stat.value}</p>
+                  <p className="text-slate-400 font-medium mt-1 sm:mt-2 text-xs sm:text-base">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="section-padding px-4 sm:px-6 lg:px-8 section-muted">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 md:mb-16">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-100 px-2">
+              {t.features.title}
+            </h2>
+            <p className="mt-3 md:mt-4 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto px-2">
+              {t.features.subtitle}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {features.map((feature, index) => {
+              const featureData = t.features[feature.key as keyof typeof t.features] as { title: string; description: string };
+              return (
+                <div key={index} className="card-gradient group md:hover:scale-105 transition-transform">
+                  <div className={`icon-circle icon-circle-${feature.color} mb-6`}>
+                    <feature.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-100 mb-2">
+                    {featureData.title}
+                  </h3>
+                  <p className="text-slate-400 text-sm">
+                    {featureData.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section id="how-it-works" className="section-padding px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 md:mb-16">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-100 px-2">
+              {t.howItWorks.title}
+            </h2>
+            <p className="mt-3 md:mt-4 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto px-2">
+              {t.howItWorks.subtitle}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            {t.howItWorks.steps.map((item, index) => (
+              <div key={index} className="relative text-center">
+                {index < 3 && (
+                  <div className="hidden md:block absolute top-10 left-1/2 w-full h-1 bg-sky-300" />
+                )}
+                <div className="relative inline-flex">
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-xl shadow-blue-500/30 z-10 relative">
+                    <Lightbulb className="w-8 h-8" />
+                  </div>
+                </div>
+                <h3 className="mt-6 text-lg font-bold text-slate-100">{item.title}</h3>
+                <p className="mt-2 text-slate-400 text-sm">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <button onClick={handleBookConsultation} className="btn-gradient flex items-center gap-2 mx-auto">
+              <Target className="w-5 h-5" />
+              ယခုစတင်ပါ
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews */}
+      <section id="reviews" className="section-padding px-4 sm:px-6 lg:px-8 section-muted">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 md:mb-16">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-100 px-2">
+              {t.reviews.title}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            {reviews.map((review, index) => (
+              <div key={index} className="glass-card p-5 sm:p-8 md:hover:scale-105 transition-transform">
+                <div className="flex items-center gap-1 mb-4">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className={`w-5 h-5 ${i <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`} />
+                  ))}
+                </div>
+                <p className="text-slate-400 mb-6 leading-relaxed">"{review.comment}"</p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-sky-300 rounded-full flex items-center justify-center text-white font-bold">
+                    {review.name.charAt(0)}
+                  </div>
+                  <div>
+                    <span className="font-bold text-slate-100">{review.name}</span>
+                    <div className="flex items-center gap-1 text-sm text-slate-500">
+                      <CheckCircle className="w-4 h-4 text-emerald-500" />
+                      <span>လူနာဟောင်း</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="cta-drtun py-12 md:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="myanmar-heading text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 px-2">
+            {t.cta.title}
+          </h2>
+          <p className="myanmar-text text-base sm:text-lg text-white/90 mb-8 md:mb-10 max-w-xl mx-auto px-2">
+            {t.cta.subtitle}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
+            <button onClick={handleBookConsultation} className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto">
+              <Sparkles className="w-5 h-5 shrink-0" />
+              <span className="text-center">{t.cta.bookNow} — ၁၅,၀၀၀ ကျပ်</span>
+            </button>
+            <a href="tel:+959123456789" className="btn-secondary flex items-center justify-center gap-2 w-full sm:w-auto">
+              <Phone className="w-5 h-5" />
+              {t.cta.callNow}
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer id="contact" className="bg-gray-900 text-white py-10 md:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <div className="min-w-0 sm:col-span-2 md:col-span-1">
+              <div className="flex items-center gap-3 mb-4 md:mb-6 min-w-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center">
+                  <Stethoscope className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900" />
+                </div>
+                <span className="text-lg sm:text-xl font-bold truncate">ဒေါက်တာထွန်းမြတ်ဝင်း</span>
+              </div>
+              <p className="text-slate-500 leading-relaxed myanmar-text">
+                {language === 'en'
+                  ? 'Online consultations for thyroid conditions only.'
+                  : 'သိုင်းရိုက်ရောဂါများအတွက် အွန်လိုင်းဆွေးနွေးမှု သာလျှင်။'}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4 text-lg">{t.footer.quickLinks}</h4>
+              <ul className="space-y-3 text-slate-500">
+                <li><a href="#about" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight className="w-4 h-4" />{t.nav.about}</a></li>
+                <li><a href="#how-it-works" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight className="w-4 h-4" />{t.nav.services}</a></li>
+                <li><a href="#reviews" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight className="w-4 h-4" />{t.nav.reviews}</a></li>
+                <li><Link href="/booking" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight className="w-4 h-4" />ယခုချိန်းဆိုရန်</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4 text-lg">{t.footer.contact}</h4>
+              <ul className="space-y-3 text-gray-400">
+                <li className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-sky-400" />
+                  +95 9 123 456 789
+                </li>
+                <li className="flex items-center gap-3">
+                  <MessageCircle className="w-5 h-5 text-sky-400" />
+                  dr.tunmyatwin@gmail.com
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4 text-lg">{t.footer.followUs}</h4>
+              <div className="flex gap-4">
+                <a href="https://youtube.com/@drtunmyatwin" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-red-500 transition-colors group">
+                  <svg className="w-6 h-6 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>
+                </a>
+                <a href="#" className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-sky-500 transition-colors group">
+                  <svg className="w-6 h-6 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" /></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-12 pt-8 text-center">
+            <p className="text-gray-400">© ၂၀၂၅ ဒေါက်တာထွန်းမြတ်ဝင်း။ {t.footer.rights}</p>
+          </div>
         </div>
       </footer>
 
+      {/* Auth Modal */}
       {showAuthModal && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowAuthModal(false)}
-          onKeyDown={(e) => e.key === 'Escape' && setShowAuthModal(false)}
-          role="presentation"
-        >
-          <div
-            className="modal p-8 max-w-md rounded-2xl border border-border bg-card shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="auth-modal-title"
-          >
+        <div className="modal-overlay" onClick={() => setShowAuthModal(false)}>
+          <div className="modal modal--auth p-8" onClick={(e) => e.stopPropagation()}>
             <div className="text-center">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted" aria-hidden>
-                <User className="h-8 w-8 text-foreground" />
+              <div className="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                <Stethoscope className="w-10 h-10 text-blue-600" />
               </div>
-              <h2 id="auth-modal-title" className="text-xl font-semibold text-foreground">
+              <h2 className="myanmar-heading text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
                 အကောင့်ဝင်ရန်လိုအပ်ပါသည်
               </h2>
-              <p className="mt-2 text-sm text-muted-foreground">ဆွေးနွေးခြင်းချိန်းဆိုရန် အကောင့်ဝင်ပါ။</p>
-              <div className="mt-8 flex gap-3">
-                <Link href="/login" className={`btn-primary flex-1 justify-center text-center ${focusRing}`}>
+              <p className="myanmar-text text-slate-700 mb-8 text-sm sm:text-base">
+                ဆွေးနွေးခြင်းချိန်းဆိုရန် အကောင့်ဝင်ပါ။
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Link href="/login" className="btn-primary flex-1 text-center">
                   {t.auth.signIn}
                 </Link>
-                <Link href="/register" className={`btn-secondary flex-1 justify-center text-center ${focusRing}`}>
+                <Link href="/register" className="btn-secondary flex-1 text-center">
                   {t.auth.signUp}
                 </Link>
               </div>

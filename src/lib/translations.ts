@@ -2,7 +2,7 @@ export const translations = {
   en: {
     nav: {
       about: 'About',
-      services: 'Services',
+      services: 'Thyroid care',
       reviews: 'Reviews',
       contact: 'Contact',
       login: 'Login',
@@ -11,11 +11,12 @@ export const translations = {
     },
     hero: {
       onlineConsultation: 'Online Consultation Available',
-      title: 'Professional Medical Consultation',
-      subtitle: 'Anytime, Anywhere',
-      description: 'Get expert medical advice from the comfort of your home. Specializing in male reproductive health and nervous system disorders with over 15 years of experience helping thousands of patients.',
+      title: 'Thyroid Specialist',
+      subtitle: 'Online Consultation',
+      description:
+        'Worried about thyroid symptoms? We focus only on thyroid care—hyperthyroidism, hypothyroidism, thyroid nodules, and thyroid cancer—with clear lab interpretation and a plan you can follow with confidence.',
       bookAppointment: 'Book Appointment',
-      viewServices: 'View Services',
+      viewServices: 'How it works',
       followers: '60K+ followers',
       rating: '4.9/5 Rating',
     },
@@ -408,7 +409,7 @@ export const translations = {
   my: {
     nav: {
       about: 'အကြောင်းအရာ',
-      services: 'ဝန်ဆောင်မှုများ',
+      services: 'သိုင်းရိုက်ရောဂါ',
       reviews: 'သုံးစွဲသူများအကြောင်း',
       contact: 'ဆက်သွယ်ရန်',
       login: 'ဝင်ရန်',
@@ -417,11 +418,12 @@ export const translations = {
     },
     hero: {
       onlineConsultation: 'အွန်လိုင်းဆွေးနွေးမှု ရရှိနိုင်ပါပြီ',
-      title: 'ပညာရှင်ဆရာဝန်နှင့် ဆွေးနွေးမှု',
-      subtitle: 'မည်သည့်အချိန်မဆို၊ မည်သည့်နေရာမဆို',
-      description: 'သင့်အိမ်တွင်ကျန်းမာရေးအကြံဉာဏ်ရယူပါ။ အမျိုးသားများကျန်းမာရေးနှင့် အာရုံကြောစနစ်ပြဿနာများကို အထူးပြု လုပ်ဆောင်ပြီး နှစ်ပေါင်းများစွာသောလူနာများအား ကူညီခဲ့သည့် အနည်းဆုံး ၁၅နှစ်အတွေ့အကြုံရှိပါသည်။',
+      title: 'သိုင်းရိုက်ရောဂါ အထူးကု ဆရာဝန်နှင့်',
+      subtitle: 'အွန်လိုင်းဆွေးနွေးမှု',
+      description:
+        'သိုင်းရိုက်လက္ခဏာများကြောင့် စိတ်မလုံခြုံမိနေပါသလား။ ကျွန်ုပ်တို့သည် သိုင်းရိုက်ရောဂါကိုသာ အထူးကြည့်ရှုကုသပေးပါသည်—သိုင်းရိုက် ဟော်မုန်းများခြင်း၊ ဟော်မုန်းနည်းခြင်း၊ သိုင်းရိုက် အကျိတ်များနှင့် သိုင်းရိုက် ကင်ဆာများ။ သွေးစစ်ဆေးမှု ရလဒ်ကို ရှင်းလင်းစွာ နားလည်ပြီး၊ နောက်တစ်ဆင့်ဘာလုပ်ရမည်ကို ယုံကြည်စွာ ဆုံးဖြတ်နိုင်အောင် အကြံဉာဏ်ပေးပါသည်။',
       bookAppointment: 'ချိန်းဆိုရန်',
-      viewServices: 'ဝန်ဆောင်မှုများကြည့်မည်',
+      viewServices: 'ဆွေးနွေးမှုလုပ်ငန်းစဉ်',
       followers: '၆သောင်း+ စောင်းလောင်းသူများ',
       rating: '၄.၉/၅ ရမှတ်',
     },

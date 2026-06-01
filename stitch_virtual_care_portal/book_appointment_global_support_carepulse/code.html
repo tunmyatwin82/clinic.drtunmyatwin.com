@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="light" lang="my"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e1e8ff",
+                        "surface-variant": "#d8e2ff",
+                        "inverse-on-surface": "#edf0ff",
+                        "surface-tint": "#0c56d0",
+                        "outline": "#737685",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#001848",
+                        "surface-bright": "#faf9ff",
+                        "on-secondary-container": "#00734c",
+                        "tertiary-fixed-dim": "#bdc7d6",
+                        "secondary": "#006c47",
+                        "outline-variant": "#c3c6d6",
+                        "inverse-primary": "#b2c5ff",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#d9e3f2",
+                        "tertiary-container": "#525c68",
+                        "on-tertiary-container": "#cad4e3",
+                        "inverse-surface": "#1d3054",
+                        "secondary-container": "#82f9be",
+                        "surface": "#faf9ff",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#051a3e",
+                        "primary": "#003d9b",
+                        "surface-container": "#e9edff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#d8e2ff",
+                        "background": "#faf9ff",
+                        "on-secondary-fixed-variant": "#005235",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "secondary-fixed": "#82f9be",
+                        "on-secondary-fixed": "#002113",
+                        "primary-container": "#0052cc",
+                        "on-primary-container": "#c4d2ff",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "secondary-fixed-dim": "#65dca4",
+                        "surface-container-low": "#f1f3ff",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "tertiary": "#3b4450",
+                        "on-surface": "#051a3e",
+                        "on-tertiary-fixed": "#131c27",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#dae2ff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#3e4853",
+                        "on-surface-variant": "#434654",
+                        "surface-dim": "#ccdaff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "xl": "64px",
+                        "md": "24px",
+                        "margin": "32px",
+                        "sm": "12px",
+                        "lg": "40px",
+                        "max_width": "1280px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Inter"],
+                        "h2": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h1": ["Inter"],
+                        "button": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h2": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "h1": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "button": ["16px", {"lineHeight": "20px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="bg-surface sticky top-0 z-50 shadow-[0_4px_12px_rgba(0,82,204,0.08)]">
+<nav class="flex justify-between items-center px-margin py-4 w-full max-w-max_width mx-auto">
+<div class="flex items-center gap-xs">
+<span class="font-h3 text-h3 font-bold text-primary">CarePulse</span>
+</div>
+<div class="hidden md:flex items-center gap-lg">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Find Doctors</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Services</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">Consultations</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">My Dashboard</a>
+</div>
+<div class="flex items-center gap-sm">
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-button active:scale-95 transition-transform duration-150">Book Appointment</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A professional medical patient avatar of a smiling individual in a clean, modern clinical setting with soft natural lighting and a blur of light blue medical equipment in the background. The aesthetic is high-end, bright, and empathetic, matching a premium healthcare brand's visual identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgb30XmqO0MPswPaU0XZSDYCw7AczoSBkbxuTfs9HV6rG7ytRGyJDagrJbgNoVBWZKKTny3TPvaIVtAh8saBmUs_mkyOunB6l4mqAIq62q_43jIr1Ln7dxTqUDWftHLSjTEMvRB3o2unLNM3mOwcvtNYNXQN2N5SwfPqWz6iY-EzthLZS28OyemMxIkJIbNTKWe76xuTNbIRI_3bfDlcjRUEIw2CTOItGLSLBSSntB0-DhowShbbV1i_juOBa3Gecjgrb6KcWFTY4D"/>
+</div>
+</div>
+</nav>
+</header>
+<main class="max-w-max_width mx-auto px-margin py-xl">
+<!-- Page Header -->
+<div class="mb-lg">
+<h1 class="font-h1 text-h1 text-on-background mb-xs">ရက်ချိန်းရယူရန်</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">ဆရာဝန်နှင့် တွေ့ဆုံရန် သင့်တော်သော အချိန်ကို ရွေးချယ်ပါ။</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Doctor Profile & Selection -->
+<div class="lg:col-span-4 space-y-md">
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)]">
+<div class="flex items-center gap-md mb-md">
+<div class="w-20 h-20 rounded-xl overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A portrait of a professional male doctor wearing a clean white coat and a stethoscope. He is standing in a minimalist, bright medical office with soft, professional lighting. The color palette is clinical and trustworthy, with subtle blue and white tones that evoke safety and expertise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_N66F2ppYYcYvEnc3DLqRqiWORJLkw3ZKDHcrHlJCdC218ABYwITvDhaInJ5C6i8_zmPtIbesWhTdr8H3iJK_hvB7vUuA7cz1Cyb7qkfl7W5rglkng7S58HfP7_ZpMDH2Fi2MLYdM9C_BqTgTUHaU2eoWdOWuurU7TWemjYORLNwv8gsW-VfTpzenz7Cgg4zxDW0RTsAWMgXwZsubhIEod9KpY5u7SB8JKi1Li5PNX9ID6InyE9AONWqWVcg50cAo6A_aAK0w1JYB"/>
+</div>
+<div>
+<h3 class="font-h3 text-h3 text-on-surface">ဒေါက်တာ ဇော်မင်းထွန်း</h3>
+<p class="font-body-md text-on-secondary-fixed-variant">အထွေထွေရောဂါကု ဆရာဝန်ကြီး</p>
+<div class="flex items-center gap-xs mt-xs text-primary">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="text-label-caps font-label-caps">အတည်ပြုပြီး</span>
+</div>
+</div>
+</div>
+<div class="border-t border-outline-variant pt-md space-y-sm">
+<div class="flex justify-between items-center text-body-md">
+<span class="text-on-surface-variant">တိုင်ပင်ဆွေးနွေးခ</span>
+<span class="font-bold text-primary">၂၅,၀၀၀ ကျပ်</span>
+</div>
+<div class="flex justify-between items-center text-body-md">
+<span class="text-on-surface-variant">ကြာချိန်</span>
+<span class="text-on-surface">၃၀ မိနစ်</span>
+</div>
+</div>
+</div>
+<!-- Time Zone Management Card -->
+<div class="bg-surface-container-low p-md rounded-xl border border-primary-container/20">
+<div class="flex items-center gap-xs mb-sm">
+<span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
+<h4 class="font-button text-primary">အချိန်ဇုန် စီမံခန့်ခွဲမှု</h4>
+</div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-xs">လက်ရှိ အချိန်ဇုန်</p>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 appearance-none focus:ring-2 focus:ring-primary focus:outline-none font-body-md">
+<option selected="">ရန်ကုန် (GMT+6:30)</option>
+<option>ဘန်ကောက် (GMT+7:00)</option>
+<option>စင်ကာပူ (GMT+8:00)</option>
+<option>လန်ဒန် (GMT+0:00)</option>
+<option>နယူးယောက် (GMT-5:00)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3.5 text-outline pointer-events-none">expand_more</span>
+</div>
+<p class="text-[12px] text-on-tertiary-fixed-variant mt-sm leading-relaxed">
+                        * သင့်ဖုန်းမှ အချိန်ဇုန်ကို အလိုအလျောက် သိရှိပြီးဖြစ်သည်။
+                    </p>
+</div>
+</div>
+<!-- Right Column: Calendar & Summary -->
+<div class="lg:col-span-8 space-y-md">
+<!-- Calendar Section -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)]">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-h3 text-h3">ရက်စွဲရွေးချယ်ပါ</h3>
+<div class="flex gap-xs">
+<button class="p-2 hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Date Grid -->
+<div class="grid grid-cols-7 gap-xs text-center mb-lg">
+<div class="text-label-caps text-outline py-2">SUN</div>
+<div class="text-label-caps text-outline py-2">MON</div>
+<div class="text-label-caps text-outline py-2">TUE</div>
+<div class="text-label-caps text-outline py-2">WED</div>
+<div class="text-label-caps text-outline py-2">THU</div>
+<div class="text-label-caps text-outline py-2">FRI</div>
+<div class="text-label-caps text-outline py-2">SAT</div>
+<!-- Empty states for alignment -->
+<div class="py-4"></div>
+<div class="py-4"></div>
+<div class="py-4"></div>
+<!-- Days -->
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md text-on-surface-variant">1</button>
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md text-on-surface-variant">2</button>
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md text-on-surface-variant">3</button>
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md text-on-surface-variant">4</button>
+<button class="py-4 rounded-lg bg-primary text-on-primary font-bold shadow-md">5</button>
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md">6</button>
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md">7</button>
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md">8</button>
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md">9</button>
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md">10</button>
+<button class="py-4 rounded-lg hover:bg-surface-container-high transition-colors font-body-md">11</button>
+</div>
+<!-- Slot Grid -->
+<h4 class="font-button text-on-surface mb-md">ရရှိနိုင်သော အချိန်များ (GMT+6:30)</h4>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-sm">
+<button class="border border-outline-variant py-3 rounded-lg font-button text-on-surface-variant hover:border-primary hover:text-primary transition-all">09:00 AM</button>
+<button class="bg-primary text-on-primary py-3 rounded-lg font-button shadow-sm">10:30 AM</button>
+<button class="border border-outline-variant py-3 rounded-lg font-button text-on-surface-variant hover:border-primary hover:text-primary transition-all">01:00 PM</button>
+<button class="border border-outline-variant py-3 rounded-lg font-button text-on-surface-variant hover:border-primary hover:text-primary transition-all">03:30 PM</button>
+</div>
+</div>
+<!-- Dual Time Zone Summary -->
+<div class="bg-surface-container-highest p-md rounded-xl flex flex-col md:flex-row justify-between items-center gap-md border-l-4 border-primary">
+<div class="flex items-center gap-md">
+<div class="bg-primary-container/10 p-3 rounded-full">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">info</span>
+</div>
+<div class="space-y-1">
+<h4 class="font-button text-on-background">ရက်ချိန်းအနှစ်ချုပ်</h4>
+<div class="flex flex-col sm:flex-row sm:gap-lg">
+<div class="text-body-md">
+<span class="text-on-surface-variant">သင့်အချိန် (ရန်ကုန်):</span>
+<span class="font-bold text-primary">10:30 AM</span>
+</div>
+<div class="text-body-md">
+<span class="text-on-surface-variant">ဆရာဝန်အချိန်:</span>
+<span class="font-bold text-on-surface">10:30 AM</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full md:w-auto bg-primary text-on-primary px-xl py-3 rounded-lg font-button hover:opacity-90 transition-opacity active:scale-95 duration-150">
+                        အတည်ပြုမည်
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low mt-xl border-t border-outline-variant/30">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin py-xl w-full max-w-max_width mx-auto">
+<div class="space-y-sm">
+<span class="font-h3 text-h3 font-bold text-primary">CarePulse</span>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 CarePulse Health. Professional Care, Anywhere.</p>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-button text-on-surface">ကုမ္ပဏီ</h4>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">About Us</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Emergency Protocol</a>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-button text-on-surface">ဥပဒေရေးရာ</h4>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-button text-on-surface">အကူအညီ</h4>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Support</a>
+<div class="flex gap-xs mt-xs">
+<span class="material-symbols-outlined text-on-surface-variant">language</span>
+<span class="font-body-md text-on-surface">မြန်မာဘာသာ</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

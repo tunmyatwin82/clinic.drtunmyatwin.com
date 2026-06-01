@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CarePulse | Find Your Specialist</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#c3c6d6",
+                      "primary-container": "#0052cc",
+                      "on-background": "#051a3e",
+                      "surface-container-high": "#e1e8ff",
+                      "inverse-on-surface": "#edf0ff",
+                      "on-primary": "#ffffff",
+                      "secondary": "#006c47",
+                      "on-error-container": "#93000a",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed": "#001848",
+                      "tertiary-container": "#525c68",
+                      "secondary-container": "#82f9be",
+                      "on-secondary-container": "#00734c",
+                      "secondary-fixed-dim": "#65dca4",
+                      "on-secondary-fixed": "#002113",
+                      "primary": "#003d9b",
+                      "on-secondary-fixed-variant": "#005235",
+                      "background": "#faf9ff",
+                      "error-container": "#ffdad6",
+                      "on-surface": "#051a3e",
+                      "surface-variant": "#d8e2ff",
+                      "on-surface-variant": "#434654",
+                      "surface": "#faf9ff",
+                      "surface-container-low": "#f1f3ff",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#1d3054",
+                      "surface-bright": "#faf9ff",
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "max_width": "1280px",
+                      "base": "8px",
+                      "xl": "64px",
+                      "xs": "4px",
+                      "sm": "12px",
+                      "gutter": "24px",
+                      "lg": "40px",
+                      "margin": "32px",
+                      "md": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "h2": ["Inter"],
+                      "body-md": ["Inter"],
+                      "h1": ["Inter"],
+                      "h3": ["Inter"],
+                      "button": ["Inter"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "h2": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "h1": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "h3": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "button": ["16px", {"lineHeight": "20px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .doctor-card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 82, 204, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-container selection:text-on-primary">
+<!-- TopNavBar -->
+<header class="bg-surface sticky top-0 z-50 shadow-[0_4px_12px_rgba(0,82,204,0.08)]">
+<nav class="flex justify-between items-center px-margin py-4 w-full max-w-max_width mx-auto">
+<div class="font-h3 text-h3 font-bold text-primary">CarePulse</div>
+<!-- Desktop Nav -->
+<div class="hidden md:flex items-center gap-gutter">
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1 transition-colors" href="#">Find Doctors</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Services</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Consultations</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">My Dashboard</a>
+</div>
+<div class="flex items-center gap-sm">
+<div class="hidden lg:flex items-center bg-surface-container-low px-sm py-xs rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md px-xs" placeholder="Search clinics..." type="text"/>
+</div>
+<button class="bg-primary-container text-on-primary px-gutter py-xs rounded-lg font-button text-button hover:opacity-90 active:scale-95 transition-all">Book Appointment</button>
+</div>
+</nav>
+</header>
+<main class="w-full max-w-max_width mx-auto px-margin py-lg">
+<div class="flex flex-col md:flex-row gap-gutter">
+<!-- Left Sidebar Filters -->
+<aside class="w-full md:w-80 flex-shrink-0">
+<div class="bg-surface-container-lowest p-md rounded-xl doctor-card-shadow border border-surface-container-high sticky top-24">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-h3 text-h3 text-on-surface">Filters</h2>
+<button class="text-primary font-button text-label-caps uppercase tracking-wider">Reset</button>
+</div>
+<!-- Specialty Filter -->
+<div class="mb-lg">
+<h3 class="font-label-caps text-label-caps text-outline mb-sm uppercase">Specialty</h3>
+<div class="space-y-xs">
+<label class="flex items-center gap-xs cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-on-surface-variant group-hover:text-primary transition-colors">Cardiology</span>
+</label>
+<label class="flex items-center gap-xs cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-on-surface-variant group-hover:text-primary transition-colors">Dermatology</span>
+</label>
+<label class="flex items-center gap-xs cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-on-surface-variant group-hover:text-primary transition-colors">Pediatrics</span>
+</label>
+<label class="flex items-center gap-xs cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-on-surface-variant group-hover:text-primary transition-colors">Neurology</span>
+</label>
+</div>
+</div>
+<!-- Availability Filter -->
+<div class="mb-lg">
+<h3 class="font-label-caps text-label-caps text-outline mb-sm uppercase">Availability</h3>
+<div class="grid grid-cols-2 gap-xs">
+<button class="py-xs px-xs border border-outline-variant rounded-lg font-button text-label-caps hover:bg-surface-container-low">Today</button>
+<button class="py-xs px-xs border border-outline-variant rounded-lg font-button text-label-caps hover:bg-surface-container-low">This Week</button>
+</div>
+</div>
+<!-- Rating Filter -->
+<div class="mb-lg">
+<h3 class="font-label-caps text-label-caps text-outline mb-sm uppercase">Min Rating</h3>
+<div class="flex items-center gap-xs">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface-variant hover:bg-primary-container hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface-variant hover:bg-primary-container hover:text-on-primary transition-colors">
+                                2
+                            </button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface-variant hover:bg-primary-container hover:text-on-primary transition-colors">
+                                3
+                            </button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-primary-container text-on-primary shadow-lg">
+                                4+
+                            </button>
+</div>
+</div>
+<!-- Language -->
+<div>
+<h3 class="font-label-caps text-label-caps text-outline mb-sm uppercase">Language</h3>
+<select class="w-full bg-surface-container-low border-outline-variant rounded-lg text-body-md p-xs focus:ring-primary-container">
+<option>English</option>
+<option>Spanish</option>
+<option>French</option>
+</select>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<section class="flex-grow">
+<!-- Results Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-md gap-sm">
+<div>
+<h1 class="font-h2 text-h2 text-on-background">154 Specialists Available</h1>
+<p class="font-body-md text-on-surface-variant">Top-rated doctors found near your location</p>
+</div>
+<div class="flex items-center gap-xs bg-surface-container-lowest px-sm py-xs rounded-full border border-outline-variant doctor-card-shadow">
+<span class="font-label-caps text-label-caps text-outline">SORT BY</span>
+<select class="bg-transparent border-none focus:ring-0 font-button text-button py-0 pr-gutter">
+<option>Highest Rating</option>
+<option>Price: Low to High</option>
+<option>Next Available</option>
+</select>
+</div>
+</div>
+<!-- Doctor Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
+<!-- Doctor Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-md border border-surface-container-high doctor-card-shadow flex flex-col sm:flex-row gap-md hover:border-primary-container transition-all group">
+<div class="w-full sm:w-40 h-48 flex-shrink-0 overflow-hidden rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A professional portrait of a senior female cardiologist in a crisp white lab coat, standing in a brightly lit, modern clinical corridor. The lighting is soft and high-key, highlighting her empathetic and confident expression. The background features clean architectural lines and a soft blue-tinted palette that reinforces a sense of safety and medical excellence. The overall mood is professional yet approachable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3S2MF-tssE4eKCVeJFfYKd9BTIEbedeehxU7XjdzZgnYx7aAfsK49x0PWVCEObN9xga9cuRfpcTAFGEEPWPdOzDBMKjn1Z8B2W7CwFga0BDT3HOKlmGv0-hCzaFa-9IztV8eUSEI0N85yEzcyKg_9MPSFfPpw7W6deWBflmeC75RXdc2pVZixmV4hbnJ6TlWdNxhSRH_1A0t3Y22AG65NAD88q-fGGvQFibdXMipQ35t6HITvQTrnUvyl22jle73YRbCQoOttI2hV"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<div>
+<span class="inline-block bg-secondary-container text-on-secondary-container text-label-caps font-label-caps px-xs py-0.5 rounded mb-xs">Cardiology</span>
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-primary transition-colors">Dr. Sarah Jenkins</h3>
+</div>
+<div class="flex items-center gap-1 text-on-surface font-button">
+<span class="material-symbols-outlined text-[#FFD700]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>4.9</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant mt-xs line-clamp-2">Specializing in non-invasive diagnostic techniques and preventive heart care with 15+ years experience.</p>
+<div class="flex items-center gap-gutter mt-sm text-label-caps text-outline uppercase font-label-caps">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-md">location_on</span> London, UK</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-md">payments</span> $120/hr</span>
+</div>
+</div>
+<div class="mt-md flex gap-sm">
+<button class="flex-grow bg-primary-container text-on-primary py-sm rounded-lg font-button text-button hover:opacity-90 transition-all">View Profile</button>
+<button class="w-12 h-12 flex items-center justify-center border border-outline-variant rounded-lg text-primary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Doctor Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-md border border-surface-container-high doctor-card-shadow flex flex-col sm:flex-row gap-md hover:border-primary-container transition-all group">
+<div class="w-full sm:w-40 h-48 flex-shrink-0 overflow-hidden rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A detailed professional photograph of a young male dermatologist in a modern, light-filled office. He wears professional medical scrubs in a deep navy blue, leaning slightly forward with a friendly and engaged smile. The setting is minimalist and clinically clean, with soft daylight coming from a large window. The atmosphere is calm and reassuring, using a soft-focus background of high-end medical equipment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB--6VJ01JRtO7ZdN1XnL0_gkUFZYhzLWTq68VGMxSYN5TH3owFxx18H8J4C3mFewti5Tzd6z0NOAGQlhBzAzAPFNqG6FgMFhFlVgaBHolbTcnlqqO5OslPB-8oqyhhVnAQy2NylJuBXdej0TcogUBIj8yoXH1y8rnXqBKsYIuFOhhrLVeVUeU0-bZJUdQUe8KTXiH4NkqiMykyTvb_kYLEho6l85G6qK5S3pzU_SQF0dUTHT3UyELjQUacPRGNmHXtmSK0vh5iEv1k"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<div>
+<span class="inline-block bg-secondary-container text-on-secondary-container text-label-caps font-label-caps px-xs py-0.5 rounded mb-xs">Dermatology</span>
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-primary transition-colors">Dr. Marcus Chen</h3>
+</div>
+<div class="flex items-center gap-1 text-on-surface font-button">
+<span class="material-symbols-outlined text-[#FFD700]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>4.8</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant mt-xs line-clamp-2">Expert in advanced skin health, medical aesthetics, and chronic condition management.</p>
+<div class="flex items-center gap-gutter mt-sm text-label-caps text-outline uppercase font-label-caps">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-md">location_on</span> Online</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-md">payments</span> $95/hr</span>
+</div>
+</div>
+<div class="mt-md flex gap-sm">
+<button class="flex-grow bg-primary-container text-on-primary py-sm rounded-lg font-button text-button hover:opacity-90 transition-all">View Profile</button>
+<button class="w-12 h-12 flex items-center justify-center border border-outline-variant rounded-lg text-primary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Doctor Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-md border border-surface-container-high doctor-card-shadow flex flex-col sm:flex-row gap-md hover:border-primary-container transition-all group">
+<div class="w-full sm:w-40 h-48 flex-shrink-0 overflow-hidden rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A close-up portrait of a female pediatrician in a colorful yet professional pediatric ward. She is smiling warmly, wearing a stethoscope with a small decorative animal clip to put children at ease. The lighting is warm and bright, creating a joyful and empathetic clinical atmosphere. The background shows soft, blurred elements of a modern children's hospital wing with pastel blue and white tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAk4meuBCvwBKwsnfAdeMNVrXdua1Se0IbU-E2lWULHZ_ZrXTJPdans1aWou77yM6o-X-11SSjSPAfqVIiDt_H-ek2Qx6vQukgVq1CM4sACmhQDc4lttG2Or4yxre1NigkX7JKME46SuaBw-9aAHIXLisozKeLK1bxbarolRiK61E1M3D2M6xFGhXYq3Rqt2NSOq6C_oGGE9QLDMXtwpo5EPunZ5nT1SZoena_TRzmPdzCSA9V7VnuC_fdOukWNxtpGu1VzeBmVRQnM"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<div>
+<span class="inline-block bg-secondary-container text-on-secondary-container text-label-caps font-label-caps px-xs py-0.5 rounded mb-xs">Pediatrics</span>
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-primary transition-colors">Dr. Elena Rodriguez</h3>
+</div>
+<div class="flex items-center gap-1 text-on-surface font-button">
+<span class="material-symbols-outlined text-[#FFD700]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>5.0</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant mt-xs line-clamp-2">Board-certified pediatrician dedicated to comprehensive child wellness and developmental care.</p>
+<div class="flex items-center gap-gutter mt-sm text-label-caps text-outline uppercase font-label-caps">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-md">location_on</span> Manchester, UK</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-md">payments</span> $110/hr</span>
+</div>
+</div>
+<div class="mt-md flex gap-sm">
+<button class="flex-grow bg-primary-container text-on-primary py-sm rounded-lg font-button text-button hover:opacity-90 transition-all">View Profile</button>
+<button class="w-12 h-12 flex items-center justify-center border border-outline-variant rounded-lg text-primary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Doctor Card 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-md border border-surface-container-high doctor-card-shadow flex flex-col sm:flex-row gap-md hover:border-primary-container transition-all group">
+<div class="w-full sm:w-40 h-48 flex-shrink-0 overflow-hidden rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A professional studio portrait of a middle-aged male neurologist. He is dressed in a formal blue shirt and a crisp white physician's coat, projecting authority and focused expertise. The lighting is balanced and professional, with a clean gray-blue background that matches the medical brand's palette. His expression is serious yet kind, conveying trust and intellectual depth. The image is clear, sharp, and high-quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8MCDATc-qoBuh8MqGwwVPGeCwLYc_uRxexkBOPMeLRYMwa9yGKWAgc2ylo1nOxEP6vNRO3ltEuvaLOOUEImHC2cjXXavCEvQ4W2IhWm2u4hHlJQe8o2iMUI9KQuRRHqukIKg13hNfHCPrLkbjXrpPqNvbKMsfxLfXFHkHoYSpmrVqw8QudA3whTXUFZMMBmgfI7FgOi0siCqNUY1jofvx69r-oHD3JR1ZGILQ2HfOtTKtQdGTIq582Rrf4zN8Iv_gcmxhY4BEHMnH"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<div>
+<span class="inline-block bg-secondary-container text-on-secondary-container text-label-caps font-label-caps px-xs py-0.5 rounded mb-xs">Neurology</span>
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-primary transition-colors">Dr. James Wilson</h3>
+</div>
+<div class="flex items-center gap-1 text-on-surface font-button">
+<span class="material-symbols-outlined text-[#FFD700]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>4.7</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant mt-xs line-clamp-2">Leading specialist in neurological disorders, specializing in cognitive health and neuro-rehabilitation.</p>
+<div class="flex items-center gap-gutter mt-sm text-label-caps text-outline uppercase font-label-caps">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-md">location_on</span> London, UK</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-md">payments</span> $150/hr</span>
+</div>
+</div>
+<div class="mt-md flex gap-sm">
+<button class="flex-grow bg-primary-container text-on-primary py-sm rounded-lg font-button text-button hover:opacity-90 transition-all">View Profile</button>
+<button class="w-12 h-12 flex items-center justify-center border border-outline-variant rounded-lg text-primary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-xl flex justify-center gap-xs">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-primary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container text-on-primary font-button">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-low">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-low">3</button>
+<span class="w-10 h-10 flex items-center justify-center text-outline">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-primary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low mt-xl">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin py-xl w-full max-w-max_width mx-auto">
+<div class="space-y-sm">
+<div class="font-h3 text-h3 font-bold text-primary">CarePulse</div>
+<p class="font-body-md text-on-surface-variant">Providing world-class healthcare accessibility with a click. Your health, our priority.</p>
+<div class="flex gap-sm">
+<a class="text-primary hover:opacity-80 transition-opacity" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-primary hover:opacity-80 transition-opacity" href="#"><span class="material-symbols-outlined">mail</span></a>
+</div>
+</div>
+<div>
+<h4 class="font-button text-on-surface mb-md">Company</h4>
+<ul class="space-y-sm">
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">About Us</a></li>
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Support</a></li>
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Emergency Protocol</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-button text-on-surface mb-md">Resources</h4>
+<ul class="space-y-sm">
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Find Doctors</a></li>
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Services</a></li>
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Health Blog</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-button text-on-surface mb-md">Legal</h4>
+<ul class="space-y-sm">
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-max_width mx-auto px-margin py-md border-t border-outline-variant text-center md:text-left">
+<p class="font-body-md text-on-surface-variant text-sm">© 2024 CarePulse Health. Professional Care, Anywhere.</p>
+</div>
+</footer>
+</body></html>

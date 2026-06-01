@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CarePulse | Medical Records Review</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#002113",
+                        "on-background": "#051a3e",
+                        "on-tertiary-fixed-variant": "#3e4853",
+                        "inverse-on-surface": "#edf0ff",
+                        "surface-variant": "#d8e2ff",
+                        "surface-container-low": "#f1f3ff",
+                        "on-surface-variant": "#434654",
+                        "surface": "#faf9ff",
+                        "on-primary-fixed": "#001848",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#0052cc",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#00734c",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#82f9be",
+                        "outline-variant": "#c3c6d6",
+                        "surface-container-high": "#e1e8ff",
+                        "surface-tint": "#0c56d0",
+                        "on-tertiary-fixed": "#131c27",
+                        "secondary": "#006c47",
+                        "secondary-fixed": "#82f9be",
+                        "on-surface": "#051a3e",
+                        "tertiary-fixed": "#d9e3f2",
+                        "on-tertiary-container": "#cad4e3",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#1d3054",
+                        "surface-container": "#e9edff",
+                        "tertiary-fixed-dim": "#bdc7d6",
+                        "surface-bright": "#faf9ff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b2c5ff",
+                        "tertiary-container": "#525c68",
+                        "surface-dim": "#ccdaff",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "primary-fixed": "#dae2ff",
+                        "on-secondary-fixed-variant": "#005235",
+                        "outline": "#737685",
+                        "surface-container-highest": "#d8e2ff",
+                        "primary": "#003d9b",
+                        "background": "#faf9ff",
+                        "tertiary": "#3b4450",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#c4d2ff",
+                        "secondary-fixed-dim": "#65dca4",
+                        "on-primary-fixed-variant": "#0040a2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "base": "8px",
+                        "md": "24px",
+                        "margin": "32px",
+                        "gutter": "24px",
+                        "xl": "64px",
+                        "sm": "12px",
+                        "max_width": "1280px",
+                        "lg": "40px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h2": ["Inter"],
+                        "button": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h3": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "h2": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "button": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "h3": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h1": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #faf9ff; }
+        .clinical-shadow { shadow-[0_4px_12px_rgba(0,82,204,0.08)] }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- Top Navigation Shell -->
+<nav class="bg-surface sticky top-0 z-50 shadow-[0_4px_12px_rgba(0,82,204,0.08)]">
+<div class="flex justify-between items-center px-margin py-4 w-full max-w-max_width mx-auto">
+<div class="flex items-center gap-gutter">
+<span class="font-h3 text-h3 font-bold text-primary">CarePulse</span>
+<div class="hidden md:flex gap-base">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors px-base" href="#">Find Doctors</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors px-base" href="#">Services</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors px-base" href="#">Consultations</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1 font-semibold" href="#">My Dashboard</a>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="hidden md:block font-button text-button bg-primary-container text-on-primary px-gutter py-base rounded-lg active:scale-95 transition-transform duration-150">Book Appointment</button>
+<div class="h-10 w-10 rounded-full bg-surface-container overflow-hidden">
+<img alt="Patient profile avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged woman with a friendly and calm expression, suitable for a healthcare patient profile. The lighting is soft and natural, emphasizing a trustworthy and empathetic persona. The background is a clean, out-of-focus clinic interior with soft blue and white tones that match the medical clinical aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANkwpgVW9u67a6eLFYHzd5feMxVqba12FlHRLYk41QTQ9WLWt4rnzRNDuD8ScUWN6anMhK1hFGohn2bkc57stIBkWU56-xOa3mzxWdTpXMEK764K94D1oO1NcxK0JAo4l29NAjv-hKCg9VpzbA2P3In8Q3ocuJ-ISJSaavplGG31lZpCZ5wpPBPAW--wYqw_99G135tGUgFm16jNdmHkX-zmitd9A209cQZdeQv7AtbDG9w2b4aHfCuJmff9fWQ6CiKjgDpYLq58wU"/>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-max_width mx-auto px-margin py-lg space-y-lg">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<nav class="flex items-center text-on-surface-variant text-label-caps font-label-caps mb-xs">
+<span class="hover:text-primary cursor-pointer">Dashboard</span>
+<span class="material-symbols-outlined mx-xs text-[16px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer">Medical Records</span>
+</nav>
+<h1 class="font-h1 text-h1 text-on-background">Blood Test Results</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Reviewing complete metabolic panel and lipid profile.</p>
+</div>
+<div class="flex gap-sm">
+<button class="flex items-center gap-xs font-button text-button border border-outline text-on-surface px-gutter py-base rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">download</span>
+                    Download PDF
+                </button>
+<button class="flex items-center gap-xs font-button text-button bg-primary text-on-primary px-gutter py-base rounded-lg hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">mail</span>
+                    Message Doctor
+                </button>
+</div>
+</header>
+<!-- Bento Grid Layout for Record Details -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Main Content: Lab Results -->
+<section class="lg:col-span-8 space-y-gutter">
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)]">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-h3 text-h3 text-on-surface">Test Parameters</h2>
+<span class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded-full text-label-caps font-label-caps">Verified Record</span>
+</div>
+<div class="space-y-base">
+<!-- Result Row -->
+<div class="grid grid-cols-1 md:grid-cols-4 items-center p-base rounded-lg border border-transparent hover:border-surface-variant transition-colors">
+<span class="font-body-md text-on-surface font-semibold">Glucose, Serum</span>
+<span class="font-body-md text-primary font-bold">92 mg/dL</span>
+<span class="text-on-surface-variant text-label-caps font-label-caps">Range: 65 - 99</span>
+<div class="flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="text-label-caps font-label-caps">Normal</span>
+</div>
+</div>
+<hr class="border-surface-container"/>
+<div class="grid grid-cols-1 md:grid-cols-4 items-center p-base rounded-lg border border-transparent hover:border-surface-variant transition-colors">
+<span class="font-body-md text-on-surface font-semibold">Cholesterol, Total</span>
+<span class="font-body-md text-error font-bold">210 mg/dL</span>
+<span class="text-on-surface-variant text-label-caps font-label-caps">Range: 100 - 199</span>
+<div class="flex items-center gap-xs text-error">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+<span class="text-label-caps font-label-caps">High Risk</span>
+</div>
+</div>
+<hr class="border-surface-container"/>
+<div class="grid grid-cols-1 md:grid-cols-4 items-center p-base rounded-lg border border-transparent hover:border-surface-variant transition-colors">
+<span class="font-body-md text-on-surface font-semibold">HDL Cholesterol</span>
+<span class="font-body-md text-secondary font-bold">58 mg/dL</span>
+<span class="text-on-surface-variant text-label-caps font-label-caps">Range: &gt;39</span>
+<div class="flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="text-label-caps font-label-caps">Good</span>
+</div>
+</div>
+<hr class="border-surface-container"/>
+<div class="grid grid-cols-1 md:grid-cols-4 items-center p-base rounded-lg border border-transparent hover:border-surface-variant transition-colors">
+<span class="font-body-md text-on-surface font-semibold">LDL Cholesterol</span>
+<span class="font-body-md text-on-surface font-bold">124 mg/dL</span>
+<span class="text-on-surface-variant text-label-caps font-label-caps">Range: 0 - 99</span>
+<div class="flex items-center gap-xs text-tertiary">
+<span class="material-symbols-outlined text-[18px]">info</span>
+<span class="text-label-caps font-label-caps">Borderline</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Doctor's Notes -->
+<div class="bg-surface-container-low p-md rounded-xl">
+<div class="flex items-center gap-sm mb-base">
+<span class="material-symbols-outlined text-primary">clinical_notes</span>
+<h2 class="font-h3 text-h3 text-on-surface">Doctor's Clinical Summary</h2>
+</div>
+<p class="font-body-md text-on-surface-variant leading-relaxed mb-md">
+                        Overall, the metabolic profile looks stable. However, your total cholesterol and LDL levels are trending higher than the target range. I recommend reducing saturated fat intake and increasing weekly aerobic activity. We will monitor these levels again in three months. No immediate medication adjustment is required at this stage. Please continue your current regimen.
+                    </p>
+<div class="flex items-center gap-gutter pt-base border-t border-outline-variant">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">Assigned Physician</p>
+<p class="font-body-md font-semibold text-primary">Dr. Elena Sterling, MD</p>
+</div>
+<div class="ml-auto flex items-center gap-xs">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest">Digitally Signed</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar: Info Cards -->
+<aside class="lg:col-span-4 space-y-gutter">
+<!-- Patient Info Card -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)]">
+<h3 class="font-h3 text-h3 text-on-surface mb-md">Patient Details</h3>
+<div class="space-y-sm">
+<div class="flex justify-between">
+<span class="text-on-surface-variant font-body-md">Name</span>
+<span class="text-on-surface font-semibold font-body-md">Sarah Jenkins</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant font-body-md">Date of Record</span>
+<span class="text-on-surface font-semibold font-body-md">October 24, 2023</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant font-body-md">Record ID</span>
+<span class="text-on-surface font-semibold font-body-md">#LAB-99201-B</span>
+</div>
+</div>
+</div>
+<!-- Action Card: Visualization -->
+<div class="bg-primary-container p-md rounded-xl text-on-primary">
+<h3 class="font-h3 text-h3 mb-sm">Health Trends</h3>
+<p class="font-body-md mb-md opacity-90">Compare this result with your history from the last 12 months to see progress.</p>
+<div class="bg-white/10 rounded-lg p-base flex flex-col items-center justify-center border border-white/20 aspect-video">
+<img alt="Health trend visualization" class="rounded-lg w-full h-full object-cover mb-xs" data-alt="A clean and professional digital dashboard showing a line graph with health data trends. The background is a sophisticated deep blue and the graph lines are in vibrant cyan and white. The aesthetic is clinical yet modern, conveying precision and advanced healthcare analytics in a minimal, high-tech interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe8ipd9OCDdH8Mp8aFr3nlDDdOVsQGs3g5PS7vHEzMzgMpGM8XNiKE5kcQYms6mqChKOJpp1ZRpz5DTYXS7y4hEiND07lNhF3eLLA6zSyuIeLbQZv--zJoLMPVBZhMtAZrsLa_ALRe0OTDuN8GGxIUXEYrF7J0u5ewgnoQniUHPWGRyuVpbJwNSnVNvd6V_W21dWWDHi5WQhrN-VoWj3os2d7sK48bzVOnOexH1l6kZI8IL95vO44tMnSF5uWmaWIorr3ubz1T_8WI"/>
+<span class="text-label-caps font-label-caps uppercase opacity-80">Interactive Chart View</span>
+</div>
+</div>
+<!-- Assistance Card -->
+<div class="bg-surface-container-high p-md rounded-xl border border-primary/10">
+<h3 class="font-h3 text-h3 text-primary mb-sm">Need Help?</h3>
+<p class="font-body-md text-on-surface-variant mb-md">If you have questions regarding these specific values, our support nurses are available 24/7.</p>
+<button class="w-full bg-white text-primary font-button px-gutter py-base rounded-lg border border-primary shadow-sm hover:bg-primary-container hover:text-on-primary transition-all">
+                        Call Care Support
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-surface-container-low mt-xl">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin py-xl w-full max-w-max_width mx-auto">
+<div class="space-y-sm">
+<span class="font-h3 text-h3 font-bold text-primary">CarePulse</span>
+<p class="font-body-md text-on-surface-variant">© 2024 CarePulse Health. Professional Care, Anywhere.</p>
+</div>
+<div class="flex flex-col gap-xs">
+<p class="font-label-caps text-label-caps text-on-surface font-bold uppercase mb-xs">Resources</p>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-opacity opacity-90 hover:opacity-100" href="#">About Us</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-opacity opacity-90 hover:opacity-100" href="#">Emergency Protocol</a>
+</div>
+<div class="flex flex-col gap-xs">
+<p class="font-label-caps text-label-caps text-on-surface font-bold uppercase mb-xs">Support</p>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-opacity opacity-90 hover:opacity-100" href="#">Contact Support</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-opacity opacity-90 hover:opacity-100" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-xs">
+<p class="font-label-caps text-label-caps text-on-surface font-bold uppercase mb-xs">Legal</p>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-opacity opacity-90 hover:opacity-100" href="#">Privacy Policy</a>
+</div>
+</div>
+</footer>
+</body></html>

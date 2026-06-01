@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html class="light" lang="my"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CarePulse - ဆရာဝန် ဒက်ရှ်ဘုတ်</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e1e8ff",
+                        "surface-variant": "#d8e2ff",
+                        "inverse-on-surface": "#edf0ff",
+                        "surface-tint": "#0c56d0",
+                        "outline": "#737685",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#001848",
+                        "surface-bright": "#faf9ff",
+                        "on-secondary-container": "#00734c",
+                        "tertiary-fixed-dim": "#bdc7d6",
+                        "secondary": "#006c47",
+                        "outline-variant": "#c3c6d6",
+                        "inverse-primary": "#b2c5ff",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#d9e3f2",
+                        "tertiary-container": "#525c68",
+                        "on-tertiary-container": "#cad4e3",
+                        "inverse-surface": "#1d3054",
+                        "secondary-container": "#82f9be",
+                        "surface": "#faf9ff",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#051a3e",
+                        "primary": "#003d9b",
+                        "surface-container": "#e9edff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#d8e2ff",
+                        "background": "#faf9ff",
+                        "on-secondary-fixed-variant": "#005235",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "secondary-fixed": "#82f9be",
+                        "on-secondary-fixed": "#002113",
+                        "primary-container": "#0052cc",
+                        "on-primary-container": "#c4d2ff",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "secondary-fixed-dim": "#65dca4",
+                        "surface-container-low": "#f1f3ff",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "tertiary": "#3b4450",
+                        "on-surface": "#051a3e",
+                        "on-tertiary-fixed": "#131c27",
+                        "surface-dim": "#ccdaff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "xl": "64px",
+                        "md": "24px",
+                        "margin": "32px",
+                        "sm": "12px",
+                        "lg": "40px",
+                        "max_width": "1280px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Inter"],
+                        "h2": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h1": ["Inter"],
+                        "button": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h2": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "h1": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "button": ["16px", {"lineHeight": "20px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #faf9ff;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<header class="bg-surface dark:bg-inverse-surface shadow-[0_4px_12px_rgba(0,82,204,0.08)] sticky top-0 z-50">
+<div class="flex justify-between items-center px-margin py-4 w-full max-w-max_width mx-auto">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="medical_services">medical_services</span>
+<span class="font-h3 text-h3 font-bold text-primary dark:text-inverse-primary">CarePulse</span>
+</div>
+<nav class="hidden md:flex items-center gap-xl">
+<a class="font-body-md text-body-md text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 transition-colors" href="#">Find Doctors</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-colors" href="#">Services</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-colors" href="#">Consultations</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-colors" href="#">My Dashboard</a>
+</nav>
+<div class="flex items-center gap-md">
+<div class="hidden sm:flex items-center bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm ml-2 w-32 md:w-48" placeholder="ရှာဖွေရန်..." type="text"/>
+</div>
+<img alt="Patient profile avatar" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" data-alt="A professional headshot of a mature Asian doctor in a white clinical coat, smiling warmly in a bright, modern medical office setting with soft natural lighting and a minimalist background of medical diplomas." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv8q_UfVF3U4uG2_v_bDkL0q--lFU6rvxTqXKJTv4Qv48oT5kxSrYziZUoqwsKIDWOtMpSuB_EarzkOfH3AM0Y8IUP1u8pYmvGdUQR2vfxlWgGnlBNe1mPRNL3tGP8cZ3PFiiiKBzM1d8cyepuA-5gRw0riuBL5r6bbvPVlALVdhA7RILI1P5qmcvn9BbXAf9Z6jgghIm1ruTohYecDUoVt5LReRWir7jpuH1gJLi4-qJX2t59ZZQEOpd8swhhioeY0iBKveo0r8jN"/>
+</div>
+</div>
+</header>
+<main class="max-w-max_width mx-auto px-margin py-lg">
+<section class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h1 class="font-h1 text-h1 text-primary">မင်္ဂလာပါ ဒေါက်တာ</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-xs">ယနေ့အတွက် လူနာစာရင်းနှင့် အချက်အလက်များကို ဤနေရာတွင် ကြည့်ရှုနိုင်ပါသည်။</p>
+</div>
+<button class="bg-primary-container text-on-primary font-button px-lg py-sm rounded-lg flex items-center gap-base shadow-lg hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="play_circle">play_circle</span>
+                ဆွေးနွေးမှု စတင်ပါ
+            </button>
+</section>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="md:col-span-8 flex flex-col gap-gutter">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)] border-l-4 border-primary">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">ယနေ့ ချိန်းဆိုမှု</p>
+<h2 class="font-h2 text-h2 text-primary mt-xs">၁၂ ဦး</h2>
+<div class="flex items-center gap-xs text-secondary mt-2">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span class="text-xs">မနေ့ကထက် +၂</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)] border-l-4 border-secondary">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">ပြီးစီးမှု</p>
+<h2 class="font-h2 text-h2 text-secondary mt-xs">၀၈ ဦး</h2>
+<p class="text-xs text-on-surface-variant mt-2">၆၇% ပြီးစီးပြီ</p>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)] border-l-4 border-surface-variant">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">စောင့်ဆိုင်းဆဲ</p>
+<h2 class="font-h2 text-h2 text-on-surface mt-xs">၀၄ ဦး</h2>
+<p class="text-xs text-on-surface-variant mt-2">ပျမ်းမျှ ၁၅ မိနစ်</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)] overflow-hidden">
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="font-h3 text-h3 text-on-surface flex items-center gap-base">
+<span class="material-symbols-outlined text-primary" data-icon="groups">groups</span>
+                            လူနာများ အစီအစဉ်
+                        </h3>
+<button class="text-primary font-button text-sm hover:underline">အားလုံးကြည့်ရန်</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-bright text-on-surface-variant font-label-caps text-xs">
+<th class="px-md py-4">လူနာအမည်</th>
+<th class="px-md py-4">အချိန်</th>
+<th class="px-md py-4">အကြောင်းအရာ</th>
+<th class="px-md py-4">အခြေအနေ</th>
+<th class="px-md py-4">လုပ်ဆောင်ချက်</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">ဦး</div>
+<div>
+<p class="font-button text-on-surface">ဦးအောင်ကျော်</p>
+<p class="text-xs text-on-surface-variant">အသက် ၄၅ နှစ် • ကျား</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4 text-on-surface-variant font-body-md">၀၉:၃၀ AM</td>
+<td class="px-md py-4">
+<span class="text-sm bg-surface-container px-2 py-1 rounded">ပုံမှန်စစ်ဆေးခြင်း</span>
+</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 rounded-full text-xs font-bold bg-secondary-container text-on-secondary-fixed-variant">စောင့်ဆိုင်းဆဲ</span>
+</td>
+<td class="px-md py-4">
+<button class="text-primary-container p-2 rounded-full hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-4">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-bold">ဒေါ်</div>
+<div>
+<p class="font-button text-on-surface">ဒေါ်မြမြ</p>
+<p class="text-xs text-on-surface-variant">အသက် ၃၈ နှစ် • မ</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4 text-on-surface-variant font-body-md">၁၀:၁၅ AM</td>
+<td class="px-md py-4">
+<span class="text-sm bg-surface-container px-2 py-1 rounded">နှလုံးစစ်ဆေးခြင်း</span>
+</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 rounded-full text-xs font-bold bg-surface-variant text-on-surface-variant">ရောက်ရှိခြင်းမရှိ</span>
+</td>
+<td class="px-md py-4">
+<button class="text-primary-container p-2 rounded-full hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-4">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold">မောင်</div>
+<div>
+<p class="font-button text-on-surface">မောင်ဖြိုး</p>
+<p class="text-xs text-on-surface-variant">အသက် ၂၂ နှစ် • ကျား</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4 text-on-surface-variant font-body-md">၁၁:၀၀ AM</td>
+<td class="px-md py-4">
+<span class="text-sm bg-surface-container px-2 py-1 rounded">သွေးစစ်ဆေးခြင်း</span>
+</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 rounded-full text-xs font-bold bg-secondary-container text-on-secondary-fixed-variant">စောင့်ဆိုင်းဆဲ</span>
+</td>
+<td class="px-md py-4">
+<button class="text-primary-container p-2 rounded-full hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<aside class="md:col-span-4 flex flex-col gap-gutter">
+<div class="bg-primary-container text-on-primary p-md rounded-xl shadow-xl relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="font-h3 text-h3 mb-base">လူနာမှတ်တမ်း (EMR)</h4>
+<p class="font-body-md opacity-90 mb-md">နောက်ဆုံးကြည့်ရှုထားသော မှတ်တမ်းများကို လျင်မြန်စွာ ပြန်လည်ရှာဖွေပါ။</p>
+<button class="bg-surface-container-lowest text-primary font-button px-md py-2 rounded-lg flex items-center gap-xs hover:bg-opacity-90 transition-all">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+                            မှတ်တမ်းများကြည့်ရန်
+                        </button>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-9xl" data-icon="folder_shared">folder_shared</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_12px_rgba(0,82,204,0.08)]">
+<h4 class="font-button text-primary mb-md border-b border-outline-variant pb-base">လတ်တလော လှုပ်ရှားမှုများ</h4>
+<div class="flex flex-col gap-md">
+<div class="flex gap-md">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<div>
+<p class="text-sm font-button text-on-surface">ဦးဝင်းမောင် ဆွေးနွေးမှု ပြီးဆုံးပါပြီ</p>
+<p class="text-xs text-on-surface-variant">၅ မိနစ် ခန့်က</p>
+</div>
+</div>
+<div class="flex gap-md">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div>
+<p class="text-sm font-button text-on-surface">ဓာတ်ခွဲခန်းရလဒ် အသစ်ရောက်ရှိပါသည်</p>
+<p class="text-xs text-on-surface-variant">၁၂ မိနစ် ခန့်က</p>
+</div>
+</div>
+<div class="flex gap-md">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+</div>
+<div>
+<p class="text-sm font-button text-on-surface">အရေးပေါ် ချိန်းဆိုမှု (ဒေါ်တင်တင်)</p>
+<p class="text-xs text-on-surface-variant">၂၀ မိနစ် ခန့်က</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high p-md rounded-xl">
+<div class="flex items-center gap-md mb-md">
+<div class="p-2 bg-primary rounded-lg text-on-primary">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+</div>
+<div>
+<h4 class="font-button text-on-surface">ဆေးခန်းအချိန်ဇယား</h4>
+<p class="text-xs text-on-surface-variant">ဒီနေ့: ၀၉:၀၀ AM - ၀၅:၀၀ PM</p>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-1">
+<div class="h-8 flex items-center justify-center text-[10px] font-bold text-on-surface-variant">T</div>
+<div class="h-8 flex items-center justify-center text-[10px] font-bold text-on-surface-variant">W</div>
+<div class="h-8 flex items-center justify-center text-[10px] font-bold text-on-surface-variant">T</div>
+<div class="h-8 flex items-center justify-center text-[10px] font-bold text-on-surface-variant">F</div>
+<div class="h-8 flex items-center justify-center text-[10px] font-bold text-on-surface-variant">S</div>
+<div class="h-8 flex items-center justify-center text-[10px] font-bold text-on-surface-variant">S</div>
+<div class="h-8 flex items-center justify-center text-[10px] font-bold text-on-surface-variant">M</div>
+<div class="h-8 flex items-center justify-center bg-surface-container-lowest rounded text-xs text-on-surface-variant">24</div>
+<div class="h-8 flex items-center justify-center bg-surface-container-lowest rounded text-xs text-on-surface-variant">25</div>
+<div class="h-8 flex items-center justify-center bg-surface-container-lowest rounded text-xs text-on-surface-variant">26</div>
+<div class="h-8 flex items-center justify-center bg-primary text-on-primary rounded text-xs font-bold">27</div>
+<div class="h-8 flex items-center justify-center bg-surface-container-lowest rounded text-xs text-on-surface-variant">28</div>
+<div class="h-8 flex items-center justify-center bg-surface-container-lowest rounded text-xs text-on-surface-variant">29</div>
+<div class="h-8 flex items-center justify-center bg-surface-container-lowest rounded text-xs text-on-surface-variant">30</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<footer class="bg-surface-container-low dark:bg-inverse-surface mt-xl">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin py-xl w-full max-w-max_width mx-auto">
+<div class="flex flex-col gap-md">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="medical_services">medical_services</span>
+<span class="font-h3 text-h3 font-bold text-primary dark:text-inverse-primary">CarePulse</span>
+</div>
+<p class="font-body-md text-on-surface-variant">© 2024 CarePulse Health. Professional Care, Anywhere.</p>
+</div>
+<div class="flex flex-col gap-sm">
+<h5 class="font-button text-primary">အမြန်လင့်ခ်များ</h5>
+<a class="font-body-md text-on-surface-variant hover:underline hover:text-primary-container" href="#">ကျွန်ုပ်တို့အကြောင်း</a>
+<a class="font-body-md text-on-surface-variant hover:underline hover:text-primary-container" href="#">အကူအညီရယူရန်</a>
+</div>
+<div class="flex flex-col gap-sm">
+<h5 class="font-button text-primary">ဥပဒေဆိုင်ရာ</h5>
+<a class="font-body-md text-on-surface-variant hover:underline hover:text-primary-container" href="#">မူဝါဒများ</a>
+<a class="font-body-md text-on-surface-variant hover:underline hover:text-primary-container" href="#">စည်းကမ်းချက်များ</a>
+</div>
+<div class="flex flex-col gap-sm">
+<h5 class="font-button text-primary">အရေးပေါ်</h5>
+<a class="font-body-md text-error hover:underline" href="#">အရေးပေါ် ဆက်သွယ်ရန်</a>
+</div>
+</div>
+</footer>
+<div class="fixed bottom-margin right-margin md:hidden">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</div>
+</body></html>

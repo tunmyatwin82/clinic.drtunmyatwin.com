@@ -1,0 +1,37 @@
+---
+alwaysApply: true
+---
+
+I'll improve the Myanmar language website by applying better typography, spacing, and contrast rules. Let me enhance the readability and design consistency.
+
+Now I'll update the hero title to use proper Myanmar CSS classes:
+
+Let me check the exact text in the testimonials and CTA sections:
+
+Let me check the exact content in the file and update the final CTA section:
+
+Perfect! I've optimized the site for Myanmar language readability using the design rules we discussed:
+
+✅ What's Been Updated:
+Letter Spacing & Line Height:
+
+Added .5px letter spacing to Myanmar text (Padauk letterforms need breathing room)
+Increased line height to 1.7-1.8 for body text
+Headings use 1.3 line height to prevent stacking issues
+Typography Classes:
+
+.myanmar-text = body content (improved readability)
+.myanmar-heading = titles with tighter line height
+Completed Sections:
+✓ Hero section - Myanmar title & subtitle with better spacing
+✓ Testimonials - Fully translated with Myanmar clients & quotes
+✓ Final CTA banner - "Ready for expert advice?" in Myanmar
+✓ Footer - © 2024 in Myanmar numerals (၂ဝ၂၄)
+
+Key Improvements for Myanmar Script:
+
+Larger character width requires extra letter-spacing (0.5px)
+Line height bumped to 1.8 to prevent vertical crowding
+Font weight set to 700 for Padauk headings (improves clarity)
+All text now has .myanmar-text class for consistent spacing
+The site now displays clear, readable Myanmar medical content with proper spacing optimized for the language's denser letterforms!
