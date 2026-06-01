@@ -1,28 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { normalizeAuthIdentifier, phoneLookupVariants } from '@/lib/auth-credentials';
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const { emailOrPhone, password } = body;
+        const identifier = normalizeAuthIdentifier(String(emailOrPhone ?? ''));
 
-        console.log('Login attempt:', emailOrPhone);
-
-        // Validate input
-        if (!emailOrPhone || !password) {
+        if (!identifier || !password) {
             return NextResponse.json(
                 { success: false, error: 'Email/Phone and password are required' },
                 { status: 400 }
             );
         }
 
-        // Find user
         let user;
-        if (emailOrPhone.includes('@')) {
-            user = await db.users.getByEmail(emailOrPhone);
+        if (identifier.includes('@')) {
+            user = await db.users.getByEmail(identifier);
         } else {
-            user = await db.users.getByPhone(emailOrPhone);
+            for (const variant of phoneLookupVariants(identifier)) {
+                user = await db.users.getByPhone(variant);
+                if (user) break;
+            }
         }
 
         if (!user) {

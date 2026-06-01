@@ -52,7 +52,6 @@ export default function Home() {
   const router = useRouter();
   const { isAuthenticated, currentUser } = useAppStore();
   const { language, setLanguage, t } = useLanguage();
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -70,11 +69,7 @@ export default function Home() {
   }, []);
 
   const handleBookConsultation = () => {
-    if (isAuthenticated) {
-      router.push('/booking');
-    } else {
-      setShowAuthModal(true);
-    }
+    router.push('/login?redirect=/booking');
   };
 
   if (!mounted) return null;
@@ -420,7 +415,7 @@ export default function Home() {
                 <li><a href="#about" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight className="w-4 h-4" />{t.nav.about}</a></li>
                 <li><a href="#how-it-works" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight className="w-4 h-4" />{t.nav.services}</a></li>
                 <li><a href="#reviews" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight className="w-4 h-4" />{t.nav.reviews}</a></li>
-                <li><Link href="/booking" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight className="w-4 h-4" />ယခုချိန်းဆိုရန်</Link></li>
+                <li><Link href="/login?redirect=/booking" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight className="w-4 h-4" />ယခုချိန်းဆိုရန်</Link></li>
               </ul>
             </div>
             <div>
@@ -454,32 +449,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Auth Modal */}
-      {showAuthModal && (
-        <div className="modal-overlay" onClick={() => setShowAuthModal(false)}>
-          <div className="modal modal--auth p-8" onClick={(e) => e.stopPropagation()}>
-            <div className="text-center">
-              <div className="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-6">
-                <Stethoscope className="w-10 h-10 text-blue-600" />
-              </div>
-              <h2 className="myanmar-heading text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
-                အကောင့်ဝင်ရန်လိုအပ်ပါသည်
-              </h2>
-              <p className="myanmar-text text-slate-700 mb-8 text-sm sm:text-base">
-                ဆွေးနွေးခြင်းချိန်းဆိုရန် အကောင့်ဝင်ပါ။
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <Link href="/login" className="btn-primary flex-1 text-center">
-                  {t.auth.signIn}
-                </Link>
-                <Link href="/register" className="btn-secondary flex-1 text-center">
-                  {t.auth.signUp}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

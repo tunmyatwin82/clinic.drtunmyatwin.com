@@ -24,7 +24,9 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useAuthHydrated } from '@/hooks/use-auth-hydrated';
 import { format, addDays } from 'date-fns';
+import { Spinner } from '@/components/ui/spinner';
 
 const bookingSchema = z.object({
   consultationType: z.enum(['video', 'audio', 'chat']),
@@ -58,6 +60,7 @@ export default function BookingPage() {
   const router = useRouter();
   const { currentUser, isAuthenticated, createAppointment, createPayment, addNotification, getDoctor } = useAppStore();
   const { language, setLanguage, t } = useLanguage();
+  const authHydrated = useAuthHydrated();
   const [step, setStep] = useState(1);
   const [selectedType, setSelectedType] = useState<string>('video');
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -84,10 +87,11 @@ export default function BookingPage() {
   });
 
   useEffect(() => {
+    if (!authHydrated) return;
     if (!isAuthenticated) {
-      router.push('/login?redirect=/booking');
+      router.replace('/login?redirect=/booking');
     }
-  }, [isAuthenticated, router]);
+  }, [authHydrated, isAuthenticated, router]);
 
   const availableDates = Array.from({ length: 14 }, (_, i) => {
     const date = addDays(new Date(), i + 1);
@@ -219,21 +223,36 @@ export default function BookingPage() {
     reader.readAsDataURL(paymentScreenshot);
   };
 
+  if (!authHydrated) {
+    return (
+      <div className="landing-page booking-page flex min-h-screen items-center justify-center p-4">
+        <div className="booking-page__glow" aria-hidden />
+        <Spinner className="relative z-10 size-10 text-primary-400" aria-hidden />
+        <span className="sr-only">Loading</span>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   if (paymentSuccess) {
     return (
-      <div className="min-h-screen bg-app-mesh flex items-center justify-center p-4">
-        <div className="card p-8 max-w-md w-full text-center">
-          <div className="w-20 h-20 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle className="w-10 h-10 text-emerald-500" />
+      <div className="landing-page booking-page flex min-h-screen items-center justify-center p-4">
+        <div className="booking-page__glow" aria-hidden />
+        <div className="clinical-panel relative z-10 mx-auto w-full max-w-md p-8 text-center">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/15">
+            <CheckCircle className="h-10 w-10 text-emerald-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">ချိန်းဆိုမှုအောင်မြင်ပါသည်!</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="myanmar-heading mb-4 text-2xl font-bold text-foreground">ချိန်းဆိုမှုအောင်မြင်ပါသည်!</h2>
+          <p className="myanmar-text mb-6 text-muted-foreground">
             သင့်ချိန်းဆိုမှုအောင်မြင်ပြီးပါပြီ။ ဆရာဝန်မှ အတည်ပြုပြီးနောက် သင့်အီးမေးလ်/SMS ဖြင့် အတည်ပြုချက်ပေးပို့ပါမည်။
           </p>
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <p className="text-sm text-gray-500 mb-2">ချိန်းဆိုမှုအသေးစိတ်</p>
-            <p className="font-medium">{t.booking.videoConsultation}</p>
-            <p className="text-gray-600">{selectedDate} တွင် {selectedTime}</p>
+          <div className="mb-6 rounded-lg border border-border bg-muted/40 p-4">
+            <p className="mb-2 text-sm text-muted-foreground">ချိန်းဆိုမှုအသေးစိတ်</p>
+            <p className="font-medium text-foreground">{t.booking.videoConsultation}</p>
+            <p className="text-muted-foreground">{selectedDate} တွင် {selectedTime}</p>
           </div>
           <button onClick={() => router.push('/dashboard')} className="btn-primary w-full">
             Dashboard သို့ သွားမည်
@@ -246,39 +265,45 @@ export default function BookingPage() {
   const selectedPaymentMethod = paymentMethods.find(m => m.id === selectedPayment);
 
   return (
-    <div className="min-h-screen bg-app-mesh py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+    <div className="landing-page booking-page min-h-screen px-4 py-8">
+      <div className="booking-page__glow" aria-hidden />
+      <div className="relative z-10 mx-auto max-w-4xl">
+        <div className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
-              <ChevronLeft className="w-5 h-5" />
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="btn-link mb-4 flex items-center gap-2"
+            >
+              <ChevronLeft className="h-5 w-5" />
               နောက်သို့
             </button>
-            <h1 className="text-3xl font-bold text-gray-900">{t.booking.title}</h1>
-            <p className="text-gray-600 mt-1">ဒေါက်တာထွန်းမြတ်ဝင်းနှင့် ချိန်းဆိုပါ</p>
+            <h1 className="myanmar-heading text-3xl font-bold text-slate-100">{t.booking.title}</h1>
+            <p className="myanmar-text mt-1 text-slate-400">ဒေါက်တာထွန်းမြတ်ဝင်းနှင့် ချိန်းဆိုပါ</p>
           </div>
           <button
+            type="button"
             onClick={() => setLanguage(language === 'en' ? 'my' : 'en')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            className="btn-link btn-link--icon shrink-0 rounded-xl border border-border bg-card/80 px-4 py-2 shadow-md backdrop-blur-md"
           >
-            <Globe className="w-4 h-4 text-gray-500" />
+            <Globe className="h-4 w-4 shrink-0" />
             <span className="text-sm">{language === 'en' ? 'မြန်မာ' : 'English'}</span>
           </button>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <div className="card">
-              <div className="border-b border-gray-100">
+            <div className="clinical-panel overflow-hidden">
+              <div className="border-b border-border">
                 <div className="flex">
                   {['အမျိုးအစား', 'နေ့ရက်', 'အသေးစိတ်', 'ငွေပေးချီမှု'].map((label, index) => (
                     <div
                       key={index}
                       className={`flex-1 py-4 text-center text-sm font-medium ${step > index
-                        ? 'text-sky-500 border-b-2 border-sky-500'
+                        ? 'border-b-2 border-primary-400 text-primary-400'
                         : step === index + 1
-                          ? 'text-sky-500 border-b-2 border-sky-500'
-                          : 'text-gray-400'
+                          ? 'border-b-2 border-primary-400 text-primary-400'
+                          : 'text-muted-foreground/70'
                         }`}
                     >
                       {index + 1}. {label}
@@ -290,7 +315,7 @@ export default function BookingPage() {
               <div className="p-6">
                 {step === 1 && (
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900 mb-4">{t.booking.selectType}</h3>
+                    <h3 className="myanmar-heading mb-4 font-semibold text-foreground">{t.booking.selectType}</h3>
                     <div className="grid gap-4">
                       {consultationTypes.map((type) => (
                         <div
@@ -299,29 +324,26 @@ export default function BookingPage() {
                             setSelectedType(type.type);
                             setValue('consultationType', type.type as 'video' | 'audio' | 'chat');
                           }}
-                          className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${selectedType === type.type
-                            ? 'border-sky-500 bg-sky-50'
-                            : 'border-gray-200 hover:border-sky-200'
-                            }`}
+                          className={`booking-option cursor-pointer p-4 ${selectedType === type.type ? 'booking-option--selected' : ''}`}
                         >
                           <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${selectedType === type.type ? 'bg-sky-500 text-white' : 'bg-gray-100 text-gray-600'
+                            <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${selectedType === type.type ? 'bg-primary-500 text-white' : 'bg-muted text-muted-foreground'
                               }`}>
                               <type.icon className="w-6 h-6" />
                             </div>
                             <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900">
+                              <h4 className="font-semibold text-foreground">
                                 {t.booking[type.key as keyof typeof t.booking]}
                               </h4>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-muted-foreground">
                                 {type.type === 'video' && 'ဆရာဝန်နှင့် မျက်နှာချင်းဆိုင် ဗီဒီယိုခေါ်ဆိုခြင်း'}
                                 {type.type === 'audio' && 'အသံခေါ်ဆိုခြင်းဖြင့် ဆွေးနွေးခြင်း'}
                                 {type.type === 'chat' && 'စာတိုပေးပို့ခြင်းဖြင့် ဆွေးနွေးခြင်း'}
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="text-xl font-bold text-sky-500">{type.price.toLocaleString()}</p>
-                              <p className="text-xs text-gray-500">ကျပ်</p>
+                              <p className="text-xl font-bold text-primary-400">{type.price.toLocaleString()}</p>
+                              <p className="text-xs text-muted-foreground">ကျပ်</p>
                             </div>
                           </div>
                         </div>
@@ -333,15 +355,16 @@ export default function BookingPage() {
                 {step === 2 && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-4">{t.booking.selectDate}</h3>
+                      <h3 className="myanmar-heading mb-4 font-semibold text-foreground">{t.booking.selectDate}</h3>
                       <div className="flex gap-2 overflow-x-auto pb-2">
                         {availableDates.map((dateItem) => (
                           <button
                             key={dateItem.date}
+                            type="button"
                             onClick={() => handleDateSelect(dateItem.date)}
-                            className={`flex-shrink-0 w-16 py-3 rounded-xl text-center transition-all ${selectedDate === dateItem.date
-                              ? 'bg-sky-500 text-white'
-                              : 'bg-gray-100 text-gray-600 hover:bg-sky-100'
+                            className={`w-16 shrink-0 rounded-xl py-3 text-center transition-all ${selectedDate === dateItem.date
+                              ? 'bg-primary-500 text-white'
+                              : 'bg-muted/80 text-muted-foreground hover:bg-primary-500/15 hover:text-foreground'
                               }`}
                           >
                             <p className="text-xs">{dateItem.day}</p>
@@ -356,15 +379,16 @@ export default function BookingPage() {
                     </div>
 
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-4">{t.booking.selectTime}</h3>
+                      <h3 className="myanmar-heading mb-4 font-semibold text-foreground">{t.booking.selectTime}</h3>
                       <div className="grid grid-cols-4 gap-2">
                         {timeSlots.map((time) => (
                           <button
                             key={time}
+                            type="button"
                             onClick={() => handleTimeSelect(time)}
-                            className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${selectedTime === time
-                              ? 'bg-sky-500 text-white'
-                              : 'bg-gray-100 text-gray-600 hover:bg-sky-100'
+                            className={`rounded-lg px-3 py-2 text-sm font-medium transition-all ${selectedTime === time
+                              ? 'bg-primary-500 text-white'
+                              : 'bg-muted/80 text-muted-foreground hover:bg-primary-500/15 hover:text-foreground'
                               }`}
                           >
                             {time}
@@ -381,7 +405,7 @@ export default function BookingPage() {
                 {step === 3 && (
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="mb-2 block text-sm font-medium text-foreground">
                         {t.booking.symptoms}
                       </label>
                       <textarea
@@ -396,7 +420,7 @@ export default function BookingPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="mb-2 block text-sm font-medium text-foreground">
                         {t.booking.additionalNotes}
                       </label>
                       <textarea
@@ -408,10 +432,10 @@ export default function BookingPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="mb-2 block text-sm font-medium text-foreground">
                         ကျန်းမာရေးမှတ်တမ်းများ တင်ပေးပါ (ဓာတ်ပုံ, PDF, စာသား)
                       </label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-sky-500 transition-colors">
+                      <div className="rounded-xl border-2 border-dashed border-border p-6 text-center transition-colors hover:border-primary-400">
                         <input
                           type="file"
                           id="healthRecords"
@@ -421,9 +445,9 @@ export default function BookingPage() {
                           className="hidden"
                         />
                         <label htmlFor="healthRecords" className="cursor-pointer">
-                          <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                          <p className="text-sm text-gray-600">ဖိုင်များ ရွေးချယ်ပါ သို့မဟုင်း ဒရော့လှုပ်ပါ</p>
-                          <p className="text-xs text-gray-400 mt-1">ဓာတ်ပုံ, PDF, စာသား ဖိုင်များ လက်ခံပါသည်</p>
+                          <Upload className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">ဖိုင်များ ရွေးချယ်ပါ သို့မဟုတ် ဒရော့လှုပ်ပါ</p>
+                          <p className="mt-1 text-xs text-muted-foreground/80">ဓာတ်ပုံ, PDF, စာသား ဖိုင်များ လက်ခံပါသည်</p>
                         </label>
                       </div>
                       {healthRecordPreviews.length > 0 && (
@@ -433,8 +457,8 @@ export default function BookingPage() {
                               {preview.startsWith('data:image') ? (
                                 <img src={preview} alt={`Health record ${index + 1}`} className="w-full h-24 object-cover rounded-lg" />
                               ) : (
-                                <div className="w-full h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-                                  <span className="text-xs text-gray-500">{healthRecords[index].name}</span>
+                                <div className="flex h-24 w-full items-center justify-center rounded-lg bg-muted/80">
+                                  <span className="text-xs text-muted-foreground">{healthRecords[index].name}</span>
                                 </div>
                               )}
                               <button
@@ -449,9 +473,9 @@ export default function BookingPage() {
                       )}
                     </div>
 
-                    <div className="bg-sky-50 rounded-xl p-4">
-                      <h4 className="font-medium text-sky-800 mb-2">{t.booking.beforeConsultation}</h4>
-                      <ul className="text-sm text-sky-700 space-y-1">
+                    <div className="rounded-xl border border-primary-500/20 bg-primary-500/10 p-4">
+                      <h4 className="mb-2 font-medium text-primary-300">{t.booking.beforeConsultation}</h4>
+                      <ul className="space-y-1 text-sm text-primary-200/90">
                         <li>• {t.booking.tips[0]}</li>
                         <li>• {t.booking.tips[1]}</li>
                         <li>• {t.booking.tips[2]}</li>
@@ -462,59 +486,57 @@ export default function BookingPage() {
 
                 {step === 4 && (
                   <div className="space-y-6">
-                    <h3 className="font-semibold text-gray-900 mb-4">{t.booking.payment}</h3>
+                    <h3 className="myanmar-heading mb-4 font-semibold text-foreground">{t.booking.payment}</h3>
                     <div className="grid gap-3">
                       {paymentMethods.map((method) => (
                         <div
                           key={method.id}
                           onClick={() => handlePaymentMethodClick(method.id)}
-                          className={`p-4 border-2 rounded-xl cursor-pointer transition-all flex items-center gap-4 ${selectedPayment === method.id
-                            ? 'border-sky-500 bg-sky-50'
-                            : 'border-gray-200 hover:border-sky-200'
-                            }`}
+                          className={`booking-option flex cursor-pointer items-center gap-4 p-4 ${selectedPayment === method.id ? 'booking-option--selected' : ''}`}
                         >
                           <span className="text-2xl">{method.logo}</span>
-                          <span className="font-medium text-gray-900">{method.name}</span>
+                          <span className="font-medium text-foreground">{method.name}</span>
                           {selectedPayment === method.id && (
-                            <CheckCircle className="w-5 h-5 text-sky-500 ml-auto" />
+                            <CheckCircle className="ml-auto h-5 w-5 text-primary-400" />
                           )}
                         </div>
                       ))}
                     </div>
 
                     {showPaymentDetails && selectedPaymentMethod && (
-                      <div className="bg-sky-50 rounded-xl p-6 mt-4">
-                        <div className="flex items-center gap-3 mb-4">
-                          <Smartphone className="w-6 h-6 text-sky-600" />
-                          <h4 className="font-semibold text-gray-900">ငွေပေးချေမှု အချက်အလက်</h4>
+                      <div className="mt-4 rounded-xl border border-primary-500/20 bg-primary-500/10 p-6">
+                        <div className="mb-4 flex items-center gap-3">
+                          <Smartphone className="h-6 w-6 text-primary-400" />
+                          <h4 className="font-semibold text-foreground">ငွေပေးချေမှု အချက်အလက်</h4>
                         </div>
                         <div className="space-y-3">
-                          <div className="flex items-center justify-between bg-white rounded-lg p-3">
-                            <span className="text-sm text-gray-600">ဖုန်းနံပါတ်</span>
+                          <div className="flex items-center justify-between rounded-lg border border-border bg-card/80 p-3">
+                            <span className="text-sm text-muted-foreground">ဖုန်းနံပါတ်</span>
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-lg text-sky-600">{selectedPaymentMethod.phone}</span>
+                              <span className="text-lg font-bold text-primary-400">{selectedPaymentMethod.phone}</span>
                               <button
+                                type="button"
                                 onClick={() => copyToClipboard(selectedPaymentMethod.phone)}
-                                className="p-1 hover:bg-gray-100 rounded"
+                                className="rounded p-1 hover:bg-muted/50"
                                 title="ကူးယူမည်"
                               >
-                                <Copy className="w-4 h-4 text-gray-500" />
+                                <Copy className="h-4 w-4 text-muted-foreground" />
                               </button>
                             </div>
                           </div>
-                          <div className="flex items-center justify-between bg-white rounded-lg p-3">
-                            <span className="text-sm text-gray-600">အကောင့်နာမည်</span>
-                            <span className="font-bold text-gray-900">{selectedPaymentMethod.accountName}</span>
+                          <div className="flex items-center justify-between rounded-lg border border-border bg-card/80 p-3">
+                            <span className="text-sm text-muted-foreground">အကောင့်နာမည်</span>
+                            <span className="font-bold text-foreground">{selectedPaymentMethod.accountName}</span>
                           </div>
                         </div>
                       </div>
                     )}
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="mb-2 block text-sm font-medium text-foreground">
                         ငွေပေးချေမှု ဓာတ်ပုံ တင်ပေးပါ
                       </label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-sky-500 transition-colors">
+                      <div className="rounded-xl border-2 border-dashed border-border p-6 text-center transition-colors hover:border-primary-400">
                         <input
                           type="file"
                           id="paymentScreenshot"
@@ -538,29 +560,29 @@ export default function BookingPage() {
                             </div>
                           ) : (
                             <>
-                              <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                              <p className="text-sm text-gray-600">ဓာတ်ပုံ ရွေးချယ်ပါ သို့မဟုင်း ဒရော့လှုပ်ပါ</p>
-                              <p className="text-xs text-gray-400 mt-1">PNG, JPG ဖိုင်များ လက်ခံပါသည်</p>
+                              <Upload className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
+                              <p className="text-sm text-muted-foreground">ဓာတ်ပုံ ရွေးချယ်ပါ သို့မဟုတ် ဒရော့လှုပ်ပါ</p>
+                              <p className="mt-1 text-xs text-muted-foreground/80">PNG, JPG ဖိုင်များ လက်ခံပါသည်</p>
                             </>
                           )}
                         </label>
                       </div>
                     </div>
 
-                    <div className="border-t border-gray-100 pt-4">
-                      <div className="flex justify-between text-sm mb-2">
-                        <span className="text-gray-600">ဆွေးနွေးခ</span>
-                        <span className="font-medium">{consultationTypes.find(t => t.type === selectedType)?.price.toLocaleString()} ကျပ်</span>
+                    <div className="border-t border-border pt-4">
+                      <div className="mb-2 flex justify-between text-sm">
+                        <span className="text-muted-foreground">ဆွေးနွေးခ</span>
+                        <span className="font-medium text-foreground">{consultationTypes.find(t => t.type === selectedType)?.price.toLocaleString()} ကျပ်</span>
                       </div>
                       <div className="flex justify-between text-lg font-bold">
-                        <span>{t.booking.total}</span>
-                        <span className="text-sky-500">{consultationTypes.find(t => t.type === selectedType)?.price.toLocaleString()} ကျပ်</span>
+                        <span className="text-foreground">{t.booking.total}</span>
+                        <span className="text-primary-400">{consultationTypes.find(t => t.type === selectedType)?.price.toLocaleString()} ကျပ်</span>
                       </div>
                     </div>
                   </div>
                 )}
 
-                <div className="mt-8 flex flex-col gap-3 border-t border-gray-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-8 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
                   {step > 1 ? (
                     <button
                       type="button"
@@ -607,42 +629,42 @@ export default function BookingPage() {
           </div>
 
           <div>
-            <div className="card p-6 sticky top-8">
-              <h3 className="font-semibold text-gray-900 mb-4">ချိန်းဆိုမှုအနှစ်ချုပ်</h3>
+            <div className="clinical-panel sticky top-8 p-6">
+              <h3 className="myanmar-heading mb-4 font-semibold text-slate-100">ချိန်းဆိုမှုအနှစ်ချုပ်</h3>
 
-              <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
-                <div className="w-14 h-14 bg-sky-100 rounded-full flex items-center justify-center">
-                  <User className="w-7 h-7 text-sky-500" />
+              <div className="flex items-center gap-4 border-b border-border pb-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-500/15">
+                  <User className="h-7 w-7 text-primary-400" />
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">ဒေါက်တာထွန်းမြတ်ဝင်း</h4>
-                  <p className="text-sm text-gray-500">အမျိုးသားကျန်းမာရေး</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span className="text-xs text-gray-500">၄.၉ (၁၂၅၀ ရိုက်ချက်များ)</span>
+                  <h4 className="font-medium text-foreground">ဒေါက်တာထွန်းမြတ်ဝင်း</h4>
+                  <p className="text-sm text-muted-foreground">အမျိုးသားကျန်းမာရေး</p>
+                  <div className="mt-1 flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    <span className="text-xs text-muted-foreground">၄.၉ (၁၂၅၀ ရိုက်ချက်များ)</span>
                   </div>
                 </div>
               </div>
 
-              <div className="py-4 space-y-3 border-b border-gray-100">
+              <div className="space-y-3 border-b border-border py-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">အမျိုးအစား</span>
-                  <span className="font-medium">{t.booking[consultationTypes.find(t => t.type === selectedType)?.key as keyof typeof t.booking]}</span>
+                  <span className="text-muted-foreground">အမျိုးအစား</span>
+                  <span className="font-medium text-foreground">{t.booking[consultationTypes.find(t => t.type === selectedType)?.key as keyof typeof t.booking]}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">နေ့ရက်</span>
-                  <span className="font-medium">{selectedDate || 'မရွေးရသေးပါ'}</span>
+                  <span className="text-muted-foreground">နေ့ရက်</span>
+                  <span className="font-medium text-foreground">{selectedDate || 'မရွေးရသေးပါ'}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">အချိန်</span>
-                  <span className="font-medium">{selectedTime || 'မရွေးရသေးပါ'}</span>
+                  <span className="text-muted-foreground">အချိန်</span>
+                  <span className="font-medium text-foreground">{selectedTime || 'မရွေးရသေးပါ'}</span>
                 </div>
               </div>
 
               <div className="pt-4">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-900">{t.booking.total}</span>
-                  <span className="text-2xl font-bold text-sky-500">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-foreground">{t.booking.total}</span>
+                  <span className="text-2xl font-bold text-primary-400">
                     {consultationTypes.find(t => t.type === selectedType)?.price.toLocaleString()} ကျပ်
                   </span>
                 </div>

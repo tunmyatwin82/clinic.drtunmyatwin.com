@@ -2,6 +2,24 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, Patient, Doctor, Admin, Appointment, Consultation, Payment, Message, Notification } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+import { normalizeAuthIdentifier, userMatchesIdentifier } from '@/lib/auth-credentials';
+
+const DEMO_USER_IDS = new Set(['dr-1', 'admin-1', 'patient-1']);
+
+function mergeDemoUsers(users: (Patient | Doctor | Admin)[]): (Patient | Doctor | Admin)[] {
+  const merged = [...users];
+  for (const demo of defaultUsers) {
+    const idx = merged.findIndex((u) => u.id === demo.id);
+    if (idx === -1) {
+      merged.push(demo);
+    } else if (DEMO_USER_IDS.has(demo.id)) {
+      merged[idx] = { ...merged[idx], password: demo.password };
+    } else if (!merged[idx].password) {
+      merged[idx] = { ...merged[idx], password: demo.password };
+    }
+  }
+  return merged;
+}
 
 interface AppState {
   users: (Patient | Doctor | Admin)[];
@@ -120,35 +138,31 @@ export const useAppStore = create<AppState>()(
       getUser: (id) => get().users.find((u) => u.id === id),
 
       login: async (emailOrPhone, password) => {
-        console.log('Login attempt:', emailOrPhone);
+        const identifier = normalizeAuthIdentifier(emailOrPhone);
+        const users = mergeDemoUsers(get().users);
 
-        // First check local store
-        const localUser = get().users.find((u) => u.email === emailOrPhone || u.phone === emailOrPhone);
-        console.log('Local user match:', localUser ? 'yes' : 'no');
+        // First check local store (demo + registered accounts)
+        const localUser = users.find((u) => userMatchesIdentifier(u, identifier));
 
-        if (localUser && localUser.password === password) {
-          console.log('Local login successful');
-          set({ currentUser: localUser, isAuthenticated: true });
+        if (localUser?.password === password) {
+          set({ users, currentUser: localUser, isAuthenticated: true });
           return true;
         }
 
-        // Then check database via new login endpoint
+        // Then check database via login endpoint
         try {
-          console.log('Calling login API...');
           const loginResponse = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              emailOrPhone,
+              emailOrPhone: identifier,
               password,
             }),
           });
 
-          console.log('API response status:', loginResponse.status);
           const loginData = await loginResponse.json();
-          console.log('API response data:', loginData);
 
           if (loginResponse.ok) {
             if (loginData.success && loginData.user) {
@@ -167,13 +181,15 @@ export const useAppStore = create<AppState>()(
               };
 
               set((state) => {
-                const existingIndex = state.users.findIndex(u => u.email === user.email || u.phone === user.phone);
-                let updatedUsers;
+                const baseUsers = mergeDemoUsers(state.users);
+                const existingIndex = baseUsers.findIndex(
+                  (u) => userMatchesIdentifier(u, user.email || user.phone || ''),
+                );
+                const updatedUsers = [...baseUsers];
                 if (existingIndex !== -1) {
-                  updatedUsers = [...state.users];
-                  updatedUsers[existingIndex] = userToAdd;
+                  updatedUsers[existingIndex] = userToAdd as Patient | Doctor | Admin;
                 } else {
-                  updatedUsers = [...state.users, userToAdd];
+                  updatedUsers.push(userToAdd as Patient | Doctor | Admin);
                 }
                 return {
                   users: updatedUsers,
@@ -182,7 +198,6 @@ export const useAppStore = create<AppState>()(
                 };
               });
 
-              console.log('API login successful');
               return true;
             }
           }
@@ -190,7 +205,6 @@ export const useAppStore = create<AppState>()(
           console.error('Login API error:', error);
         }
 
-        console.log('Login failed');
         return false;
       },
 
@@ -317,6 +331,14 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'clinic-storage',
+      merge: (persisted, current) => {
+        const saved = (persisted ?? {}) as Partial<AppState>;
+        return {
+          ...current,
+          ...saved,
+          users: mergeDemoUsers(saved.users ?? current.users),
+        };
+      },
     }
   )
 );

@@ -55,6 +55,7 @@
   --input: rgba(255, 255, 255, 0.12);
   --ring: #3b82f6;
   --radius: 0.625rem;
+  --clinical-shadow: 0 0 40px rgba(59, 130, 246, 0.12);
 }
 
 @theme inline {
@@ -65,6 +66,9 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: rgb(var(--primary));
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: rgb(var(--secondary));
   --color-secondary-foreground: var(--secondary-foreground);
@@ -547,6 +551,83 @@ body::before {
     overflow-x: hidden;
   }
 
+  .landing-page .input-field {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: var(--border-glass);
+    color: var(--text-primary);
+  }
+
+  .landing-page .input-field:focus {
+    border-color: var(--primary-400);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+
+  .landing-page .input-field::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .booking-page {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .booking-page__glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .booking-page__glow::before,
+  .booking-page__glow::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+  }
+
+  .booking-page__glow::before {
+    width: 420px;
+    height: 420px;
+    top: -8%;
+    right: -6%;
+    background: rgba(59, 130, 246, 0.18);
+  }
+
+  .booking-page__glow::after {
+    width: 320px;
+    height: 320px;
+    bottom: 10%;
+    left: -8%;
+    background: rgba(251, 191, 36, 0.08);
+  }
+
+  .clinical-panel {
+    background: rgba(17, 24, 39, 0.92);
+    border: 1px solid var(--border-glass);
+    border-radius: 1rem;
+    box-shadow: var(--clinical-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .booking-option {
+    border: 2px solid var(--border-glass);
+    border-radius: 0.75rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .booking-option:hover {
+    border-color: rgba(96, 165, 250, 0.45);
+  }
+
+  .booking-option--selected {
+    border-color: var(--primary-400);
+    background: rgba(59, 130, 246, 0.12);
+  }
+
   .badge-gold {
     display: inline-flex;
     align-items: center;
@@ -699,12 +780,21 @@ body::before {
     opacity: 0.92;
   }
 
-  /* Card Styles */
+  /* Card Styles — dashboard light panels; dark override below */
   .card {
     background: white;
     border-radius: 1rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .landing-page .card,
+  .booking-page .card {
+    background: rgba(17, 24, 39, 0.92);
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--clinical-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .card-header {

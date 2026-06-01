@@ -88,7 +88,7 @@ function LoginFormInner() {
     try {
       const success = await login(data.emailOrPhone, data.password);
       if (success) {
-        router.push(redirectAfterLogin);
+        router.replace(redirectAfterLogin);
       } else {
         setError(t.auth.loginInvalidCredentials);
       }
@@ -101,19 +101,19 @@ function LoginFormInner() {
   };
 
   return (
-    <div className="min-h-screen bg-app-mesh flex items-center justify-center p-4 py-12">
+    <div className="landing-page flex min-h-screen items-center justify-center p-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <Link href="/" className="group mb-6 inline-flex flex-col items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-500 shadow-lg shadow-sky-500/25 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.34,1.25,0.64,1)] motion-safe:group-hover:scale-105">
-              <Stethoscope className="h-6 w-6 text-white" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-900 shadow-lg shadow-amber-500/30 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.34,1.25,0.64,1)] motion-safe:group-hover:scale-105">
+              <Stethoscope className="h-6 w-6" strokeWidth={2} aria-hidden />
             </div>
-            <span className="text-2xl font-bold text-foreground">
+            <span className="myanmar-heading text-2xl font-bold text-foreground">
               {language === 'en' ? 'Dr. Tun Myat Win' : 'ဒေါက်တာထွန်းမြတ်ဝင်း'}
             </span>
           </Link>
-          <h1 className="text-2xl font-bold text-foreground">{t.auth.welcomeBack}</h1>
-          <p className="mt-2 text-balance text-muted-foreground">{t.auth.signInSubtitle}</p>
+          <h1 className="myanmar-heading text-2xl font-bold text-foreground">{t.auth.welcomeBack}</h1>
+          <p className="myanmar-text mt-2 text-balance text-muted-foreground">{t.auth.signInSubtitle}</p>
 
           <Button
             type="button"
@@ -228,12 +228,12 @@ function LoginFormInner() {
                   form="login-form"
                   disabled={isLoading}
                   aria-busy={isLoading}
-                  className="w-full gap-2"
+                  className="btn-primary w-full gap-2"
                   size="lg"
                 >
                   {isLoading ? (
                     <>
-                      <Spinner className="size-4 text-primary-foreground" aria-hidden />
+                      <Spinner className="size-4 text-slate-900" aria-hidden />
                       <span className="sr-only">{loadingLabel}</span>
                     </>
                   ) : (
@@ -265,8 +265,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-app-mesh flex flex-col items-center justify-center gap-3 p-4">
-          <Spinner className="size-10 text-clinical-primary" />
+        <div className="landing-page flex min-h-screen flex-col items-center justify-center gap-3 p-4">
+          <Spinner className="size-10 text-primary" aria-hidden />
           <span className="sr-only">Loading</span>
         </div>
       }
