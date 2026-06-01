@@ -25,7 +25,15 @@ type ApptFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
 export default function AppointmentsPage() {
   const router = useRouter();
   const { t } = useLanguage();
-  const { currentUser, isAuthenticated, appointments, updateAppointment, getUser, payments } = useAppStore();
+  const {
+    currentUser,
+    isAuthenticated,
+    updateAppointment,
+    confirmAppointment,
+    getAppointments,
+    getUser,
+    payments,
+  } = useAppStore();
   const [filter, setFilter] = useState<ApptFilter>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -63,10 +71,26 @@ export default function AppointmentsPage() {
 
   const filterStatuses: ApptFilter[] = ['all', 'pending', 'confirmed', 'completed', 'cancelled'];
 
-  const userAppointments = appointments
-    .filter(a => {
-      if (filter === 'all') return true;
-      return a.status === filter;
+  const canManageAppointments =
+    currentUser.role === 'doctor' || currentUser.role === 'admin';
+
+  const roleAppointments = getAppointments(
+    currentUser.id,
+    currentUser.role as 'patient' | 'doctor' | 'admin',
+  );
+
+  const userAppointments = roleAppointments
+    .filter((a) => {
+      if (filter !== 'all' && a.status !== filter) return false;
+      if (!searchTerm.trim()) return true;
+      const otherId = currentUser.role === 'patient' ? a.doctorId : a.patientId;
+      const other = getUser(otherId);
+      const q = searchTerm.toLowerCase();
+      return (
+        other?.name.toLowerCase().includes(q) ||
+        a.reason.toLowerCase().includes(q) ||
+        consultationTypeLabel(a.type).toLowerCase().includes(q)
+      );
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -104,11 +128,17 @@ export default function AppointmentsPage() {
   };
 
   const handleConfirmAppointment = (appointmentId: string) => {
-    updateAppointment(appointmentId, { status: 'confirmed' });
+    if (!window.confirm('ငွေပေးချေမှု မှန်ကန်ကြောင်း စစ်ဆေးပြီး ချိန်းဆိုမှုကို အတည်ပြုမလား?')) {
+      return;
+    }
+    confirmAppointment(appointmentId);
   };
 
   const handleRejectAppointment = (appointmentId: string) => {
-    updateAppointment(appointmentId, { status: 'cancelled' });
+    if (!window.confirm('ဤချိန်းဆိုမှုကို ငြင်းပယ်မလား?')) {
+      return;
+    }
+    updateAppointment(appointmentId, { status: 'cancelled', paymentStatus: 'pending' });
   };
 
   return (
@@ -128,6 +158,18 @@ export default function AppointmentsPage() {
           </button>
         )}
       </div>
+
+      {canManageAppointments && (
+        <p className="rounded-xl border border-primary-500/25 bg-primary-500/10 px-4 py-3 text-sm text-primary-200">
+          {t.appointments.staffHint}
+        </p>
+      )}
+
+      {currentUser.role === 'patient' && (
+        <p className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-100/90">
+          {t.appointments.pendingPatientHint}
+        </p>
+      )}
 
       <div className="card">
         <div className="card-header flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -214,9 +256,22 @@ export default function AppointmentsPage() {
                         <div className="max-w-xs truncate">{appointment.reason}</div>
                       </td>
                       <td>
-                        <span className={`badge ${getStatusBadge(appointment.status)}`}>
-                          {statusLabel(appointment.status)}
-                        </span>
+                        <div className="flex flex-col gap-1">
+                          <span className={`badge ${getStatusBadge(appointment.status)}`}>
+                            {statusLabel(appointment.status)}
+                          </span>
+                          {currentUser.role === 'patient' && appointment.status === 'pending' && (
+                            <span className="text-xs text-amber-300/90">{t.appointments.pendingPatientHint}</span>
+                          )}
+                          {currentUser.role === 'patient' && appointment.status === 'confirmed' && (
+                            <span className="text-xs text-emerald-300/90">{t.appointments.confirmedPatientHint}</span>
+                          )}
+                          <span className="text-xs text-slate-400">
+                            {appointment.paymentStatus === 'paid'
+                              ? t.appointments.paymentPaid
+                              : t.appointments.paymentPending}
+                          </span>
+                        </div>
                       </td>
                       <td>
                         <div className="flex items-center gap-2 flex-wrap">
@@ -248,20 +303,22 @@ export default function AppointmentsPage() {
                               {t.appointments.joinCall}
                             </button>
                           )}
-                          {currentUser.role === 'doctor' && appointment.status === 'pending' && (
+                          {canManageAppointments && appointment.status === 'pending' && (
                             <>
                               <button
+                                type="button"
                                 onClick={() => handleConfirmAppointment(appointment.id)}
-                                className="btn-success py-1.5 px-3 text-sm flex items-center gap-1"
+                                className="btn-success flex items-center gap-1 px-3 py-1.5 text-sm"
                               >
-                                <CheckCircle className="w-4 h-4" />
+                                <CheckCircle className="h-4 w-4" />
                                 {t.appointments.confirm}
                               </button>
                               <button
+                                type="button"
                                 onClick={() => handleRejectAppointment(appointment.id)}
-                                className="btn-danger py-1.5 px-3 text-sm flex items-center gap-1"
+                                className="btn-danger flex items-center gap-1 px-3 py-1.5 text-sm"
                               >
-                                <XCircle className="w-4 h-4" />
+                                <XCircle className="h-4 w-4" />
                                 {t.appointments.reject}
                               </button>
                             </>

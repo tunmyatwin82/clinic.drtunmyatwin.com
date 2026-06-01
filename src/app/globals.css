@@ -972,9 +972,10 @@ body::before {
     color: rgb(245, 158, 11);
   }
 
-  .badge-error {
-    background: rgba(239, 68, 68, 0.1);
-    color: rgb(239, 68, 68);
+  .badge-error,
+  .badge-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
   }
 
   .badge-info {
@@ -1042,6 +1043,28 @@ body::before {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+  }
+
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    font-weight: 600;
+    padding: 0.875rem 2rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+
+  .btn-danger:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fecaca;
   }
 
   /* Sidebar Link Style */

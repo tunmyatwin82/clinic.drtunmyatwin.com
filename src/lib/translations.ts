@@ -219,6 +219,12 @@ export const translations = {
       noHealthRecords: 'No health records available',
       unknown: 'Unknown',
       noAppointments: 'No appointments found',
+      staffHint: 'Staff: log in with the doctor or admin account to approve pending bookings.',
+      pendingPatientHint:
+        'Payment submitted — waiting for the clinic to verify and confirm your appointment.',
+      confirmedPatientHint: 'Your appointment is confirmed. Join at the scheduled time.',
+      paymentPending: 'Payment under review',
+      paymentPaid: 'Payment verified',
     },
     patients: {
       title: 'Patients',
@@ -626,6 +632,14 @@ export const translations = {
       noHealthRecords: 'ကျန်းမာရေးမှတ်တမ်း မရှိသေးပါ',
       unknown: 'မသိရှိရ',
       noAppointments: 'ချိန်းဆိုမှုမရှိသေးပါ',
+      staffHint:
+        'ဆရာဝန်/အက်မင် အကောင့်ဖြင့် ဝင်ရောက်မှ စောင့်ဆိုင်းနေသော ချိန်းဆိုမှုကို အတည်ပြုနိုင်ပါသည်။',
+      pendingPatientHint:
+        'ငွေပေးချေမှု တင်ပြီးပါပြီ — ဆရာဝန်မှ စစ်ဆေးပြီး ချိန်းဆိုမှုကို အတည်ပြုရန် စောင့်ဆိုင်းနေပါသည်။',
+      confirmedPatientHint:
+        'ချိန်းဆိုမှု အတည်ပြုပြီးပါပြီ။ သတ်မှတ်ထားသော အချိန်တွင် ဝင်ရောက်ဆွေးနွေးနိုင်ပါသည်။',
+      paymentPending: 'ငွေပေးချေမှု စစ်ဆေးနေဆဲ',
+      paymentPaid: 'ငွေပေးချေမှု အတည်ပြုပြီး',
     },
     patients: {
       title: 'လူနာများ',

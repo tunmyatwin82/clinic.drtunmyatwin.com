@@ -41,7 +41,8 @@ interface AppState {
 
   createAppointment: (data: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>) => Appointment;
   updateAppointment: (id: string, data: Partial<Appointment>) => void;
-  getAppointments: (userId: string, role: 'patient' | 'doctor') => Appointment[];
+  confirmAppointment: (appointmentId: string) => void;
+  getAppointments: (userId: string, role: 'patient' | 'doctor' | 'admin') => Appointment[];
 
   createConsultation: (data: Omit<Consultation, 'id' | 'createdAt' | 'updatedAt'>) => Consultation;
   updateConsultation: (id: string, data: Partial<Consultation>) => void;
@@ -234,13 +235,66 @@ export const useAppStore = create<AppState>()(
         return appointment;
       },
 
-      updateAppointment: (id, data) => set((state) => ({
-        appointments: state.appointments.map((a) =>
-          a.id === id ? { ...a, ...data, updatedAt: new Date() } : a
-        ),
-      })),
+      updateAppointment: (id, data) => {
+        const previous = get().appointments.find((a) => a.id === id);
+        set((state) => ({
+          appointments: state.appointments.map((a) =>
+            a.id === id ? { ...a, ...data, updatedAt: new Date() } : a
+          ),
+        }));
+
+        if (previous && data.status && data.status !== previous.status) {
+          get().addNotification({
+            userId: previous.patientId,
+            title:
+              data.status === 'confirmed'
+                ? 'ချိန်းဆိုမှု အတည်ပြုပြီး'
+                : data.status === 'cancelled'
+                  ? 'ချိန်းဆိုမှု ပယ်ဖျက်ပြီး'
+                  : 'ချိန်းဆိုမှု အခြေအနေ ပြောင်းလဲပြီး',
+            message:
+              data.status === 'confirmed'
+                ? 'သင့်ချိန်းဆိုမှုကို ဆရာဝန်က အတည်ပြုပြီးပါပြီ။ ချိန်းဆိုထားသော အချိန်တွင် ဝင်ရောက်ဆွေးနွေးနိုင်ပါသည်။'
+                : data.status === 'cancelled'
+                  ? 'သင့်ချိန်းဆိုမှုကို ပယ်ဖျက်လိုက်ပါပြီ။'
+                  : `ချိန်းဆိုမှု အခြေအနေ: ${data.status}`,
+            type: 'appointment',
+            read: false,
+          });
+        }
+      },
+
+      confirmAppointment: (appointmentId) => {
+        const appointment = get().appointments.find((a) => a.id === appointmentId);
+        if (!appointment) return;
+
+        set((state) => ({
+          appointments: state.appointments.map((a) =>
+            a.id === appointmentId
+              ? { ...a, status: 'confirmed', paymentStatus: 'paid', updatedAt: new Date() }
+              : a
+          ),
+          payments: state.payments.map((p) =>
+            p.appointmentId === appointmentId
+              ? { ...p, status: 'completed', updatedAt: new Date() }
+              : p
+          ),
+        }));
+
+        get().addNotification({
+          userId: appointment.patientId,
+          title: 'ချိန်းဆိုမှု အတည်ပြုပြီး',
+          message:
+            'ငွေပေးချေမှု စစ်ဆေးပြီး ချိန်းဆိုမှုကို အတည်ပြုပြီးပါပြီ။ ချိန်းဆိုထားသော နေ့ရက်/အချိန်တွင် ဆွေးနွေးနိုင်ပါသည်။',
+          type: 'appointment',
+          read: false,
+        });
+      },
 
       getAppointments: (userId, role) => {
+        if (role === 'admin') {
+          return get().appointments;
+        }
         if (role === 'patient') {
           return get().appointments.filter((a) => a.patientId === userId);
         }
