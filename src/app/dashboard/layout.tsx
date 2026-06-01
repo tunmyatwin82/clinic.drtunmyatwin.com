@@ -1,22 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  LayoutDashboard, 
-  Calendar, 
-  Users, 
-  MessageCircle, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Calendar,
+  Users,
+  MessageCircle,
+  Settings,
   LogOut,
   Bell,
   Stethoscope,
-  Clock,
-  TrendingUp,
-  ChevronDown
+  ChevronDown,
 } from 'lucide-react';
 import { useAppStore } from '@/store';
+import { useAuthHydrated } from '@/hooks/use-auth-hydrated';
+import { Spinner } from '@/components/ui/spinner';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -32,60 +32,81 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const authHydrated = useAuthHydrated();
   const { currentUser, isAuthenticated, logout, getNotifications } = useAppStore();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   useEffect(() => {
+    if (!authHydrated) return;
     if (!isAuthenticated) {
-      router.push('/login?redirect=/dashboard');
+      router.replace('/login?redirect=/dashboard');
     }
-  }, [isAuthenticated, router]);
+  }, [authHydrated, isAuthenticated, router]);
 
-  if (!isAuthenticated || !currentUser) {
+  if (!authHydrated) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full" />
+      <div className="dashboard-shell flex min-h-screen items-center justify-center">
+        <Spinner className="size-10 text-primary-400" aria-hidden />
+        <span className="sr-only">Loading</span>
       </div>
     );
   }
 
+  if (!isAuthenticated || !currentUser) {
+    return null;
+  }
+
   const notifications = getNotifications(currentUser.id);
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const pageTitle =
+    navigation.find((item) => item.href === pathname)?.name ?? 'Dashboard';
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 z-30">
-        <div className="flex flex-col h-full">
-          <div className="p-6 border-b border-gray-100">
-            <Link href="/" className="flex items-center gap-2">
-              <Stethoscope className="w-8 h-8 text-sky-500" />
-              <span className="text-xl font-bold text-gray-900">Dr. Tun Myat Win</span>
+    <div className="dashboard-shell min-h-screen">
+      <aside className="dashboard-shell__sidebar fixed top-0 left-0 z-30 h-screen w-64">
+        <div className="flex h-full flex-col">
+          <div className="border-b border-border/60 p-6">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-900 shadow-lg shadow-amber-500/25">
+                <Stethoscope className="h-5 w-5" strokeWidth={2} aria-hidden />
+              </div>
+              <span className="myanmar-heading text-base font-bold leading-tight text-slate-100">
+                ဒေါက်တာထွန်းမြတ်ဝင်း
+              </span>
             </Link>
           </div>
 
-          <nav className="flex-1 p-4 space-y-1">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="sidebar-link"
-              >
-                <item.icon className="w-5 h-5" />
-                {item.name}
-              </Link>
-            ))}
+          <nav className="flex-1 space-y-1 p-4">
+            {navigation.map((item) => {
+              const isActive =
+                pathname === item.href ||
+                (item.href !== '/dashboard' && pathname.startsWith(item.href));
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`sidebar-link ${isActive ? 'sidebar-link--active' : ''}`}
+                >
+                  <item.icon className="h-5 w-5 shrink-0" />
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
 
-          <div className="p-4 border-t border-gray-100">
+          <div className="border-t border-border/60 p-4">
             <button
+              type="button"
               onClick={() => {
                 logout();
                 router.push('/');
               }}
-              className="sidebar-link w-full text-red-500 hover:bg-red-50"
+              className="sidebar-link w-full text-red-400 hover:bg-red-500/10 hover:text-red-300"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="h-5 w-5 shrink-0" />
               Logout
             </button>
           </div>
@@ -93,48 +114,50 @@ export default function DashboardLayout({
       </aside>
 
       <div className="ml-64">
-        <header className="sticky top-0 bg-white border-b border-gray-200 z-20">
-          <div className="flex items-center justify-between h-16 px-6">
+        <header className="dashboard-shell__header sticky top-0 z-20">
+          <div className="flex h-16 items-center justify-between px-6">
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">Dashboard</h1>
-              <p className="text-sm text-gray-500">Welcome back, {currentUser.name}</p>
+              <h1 className="myanmar-heading text-lg font-semibold text-slate-100">{pageTitle}</h1>
+              <p className="text-sm text-slate-400">Welcome back, {currentUser.name}</p>
             </div>
 
             <div className="flex items-center gap-4">
               <div className="relative">
                 <button
+                  type="button"
                   onClick={() => {
                     setShowNotifications(!showNotifications);
                     setShowUserMenu(false);
                   }}
-                  className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg"
+                  className="relative rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-slate-100"
+                  aria-label="Notifications"
                 >
-                  <Bell className="w-5 h-5" />
+                  <Bell className="h-5 w-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                       {unreadCount}
                     </span>
                   )}
                 </button>
 
                 {showNotifications && (
-                  <div className="dropdown w-80 right-0">
-                    <div className="p-4 border-b border-gray-100">
-                      <h4 className="font-semibold text-gray-900">Notifications</h4>
+                  <div className="dropdown right-0 w-80">
+                    <div className="border-b border-border/60 p-4">
+                      <h4 className="font-semibold text-slate-100">Notifications</h4>
                     </div>
                     <div className="max-h-96 overflow-auto">
                       {notifications.length === 0 ? (
-                        <p className="p-4 text-sm text-gray-500 text-center">No notifications</p>
+                        <p className="p-4 text-center text-sm text-slate-400">No notifications</p>
                       ) : (
                         notifications.slice(0, 5).map((notification) => (
                           <div
                             key={notification.id}
-                            className={`p--gray-50 hover4 border-b border:bg-gray-50 cursor-pointer ${
-                              !notification.read ? 'bg-sky-50' : ''
+                            className={`cursor-pointer border-b border-border/40 p-4 transition-colors hover:bg-white/5 ${
+                              !notification.read ? 'bg-primary-500/10' : ''
                             }`}
                           >
-                            <h5 className="font-medium text-gray-900 text-sm">{notification.title}</h5>
-                            <p className="text-xs text-gray-500 mt-1">{notification.message}</p>
+                            <h5 className="text-sm font-medium text-slate-100">{notification.title}</h5>
+                            <p className="mt-1 text-xs text-slate-400">{notification.message}</p>
                           </div>
                         ))
                       )}
@@ -145,36 +168,39 @@ export default function DashboardLayout({
 
               <div className="relative">
                 <button
+                  type="button"
                   onClick={() => {
                     setShowUserMenu(!showUserMenu);
                     setShowNotifications(false);
                   }}
-                  className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg"
+                  className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-white/5"
+                  aria-expanded={showUserMenu}
                 >
-                  <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center text-sky-600 font-medium">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-500/20 font-medium text-primary-400">
                     {currentUser.name.charAt(0)}
                   </div>
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                  <ChevronDown className="h-4 w-4 text-slate-400" />
                 </button>
 
                 {showUserMenu && (
                   <div className="dropdown right-0">
-                    <div className="p-4 border-b border-gray-100">
-                      <p className="font-medium text-gray-900">{currentUser.name}</p>
-                      <p className="text-sm text-gray-500">{currentUser.email}</p>
+                    <div className="border-b border-border/60 p-4">
+                      <p className="font-medium text-slate-100">{currentUser.name}</p>
+                      <p className="text-sm text-slate-400">{currentUser.email}</p>
                     </div>
-                    <Link href="/dashboard/settings" className="dropdown-item flex items-center gap-2">
-                      <Settings className="w-4 h-4" />
+                    <Link href="/dashboard/settings" className="dropdown-item">
+                      <Settings className="h-4 w-4" />
                       Settings
                     </Link>
                     <button
+                      type="button"
                       onClick={() => {
                         logout();
                         router.push('/');
                       }}
-                      className="dropdown-item flex items-center gap-2 text-red-500 w-full"
+                      className="dropdown-item w-full text-red-400"
                     >
-                      <LogOut className="w-4 h-4" />
+                      <LogOut className="h-4 w-4" />
                       Logout
                     </button>
                   </div>
@@ -184,9 +210,7 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        <main className="p-6">
-          {children}
-        </main>
+        <main className="p-6">{children}</main>
       </div>
     </div>
   );

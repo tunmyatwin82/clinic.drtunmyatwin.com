@@ -628,6 +628,122 @@ body::before {
     background: rgba(59, 130, 246, 0.12);
   }
 
+  /* Dashboard — DESIGN.md dark clinical shell */
+  .dashboard-shell {
+    position: relative;
+    min-height: 100vh;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+  }
+
+  .dashboard-shell__sidebar {
+    background: linear-gradient(180deg, rgba(6, 10, 22, 0.98), rgba(11, 18, 35, 0.95));
+    border-right: 1px solid var(--border-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .dashboard-shell__header {
+    background: linear-gradient(180deg, rgba(6, 10, 22, 0.92), rgba(6, 10, 22, 0.78));
+    border-bottom: 1px solid rgba(96, 165, 250, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .dashboard-shell .sidebar-link {
+    color: var(--text-secondary);
+  }
+
+  .dashboard-shell .sidebar-link:hover {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--primary-400);
+  }
+
+  .dashboard-shell .sidebar-link--active {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--primary-400);
+    border: 1px solid rgba(96, 165, 250, 0.25);
+  }
+
+  .dashboard-shell .card,
+  .dashboard-shell .stat-card {
+    background: rgba(17, 24, 39, 0.92);
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--clinical-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .dashboard-shell .stat-card:hover {
+    border-color: rgba(96, 165, 250, 0.3);
+    box-shadow: 0 0 48px rgba(59, 130, 246, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .dashboard-shell .card-header {
+    border-bottom: 1px solid var(--border-glass);
+  }
+
+  .dashboard-shell .stat-label {
+    color: var(--text-secondary);
+  }
+
+  .dashboard-shell .stat-value {
+    color: var(--text-primary);
+  }
+
+  .dashboard-shell .input-field {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: var(--border-glass);
+    color: var(--text-primary);
+  }
+
+  .dashboard-shell .input-field:focus {
+    border-color: var(--primary-400);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+
+  .dashboard-shell .dropdown {
+    background: rgba(17, 24, 39, 0.98);
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--clinical-shadow);
+  }
+
+  .dashboard-shell .dropdown-item {
+    color: var(--text-primary);
+  }
+
+  .dashboard-shell .dropdown-item:hover {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--primary-400);
+  }
+
+  .dashboard-shell .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .dashboard-shell .table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-glass);
+  }
+
+  .dashboard-shell .table td {
+    padding: 1rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .dashboard-shell .table tbody tr:hover {
+    background: rgba(59, 130, 246, 0.06);
+  }
+
   .badge-gold {
     display: inline-flex;
     align-items: center;
@@ -789,7 +905,8 @@ body::before {
   }
 
   .landing-page .card,
-  .booking-page .card {
+  .booking-page .card,
+  .dashboard-shell .card {
     background: rgba(17, 24, 39, 0.92);
     border: 1px solid var(--border-glass);
     box-shadow: var(--clinical-shadow);

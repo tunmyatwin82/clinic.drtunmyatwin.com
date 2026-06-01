@@ -13,7 +13,7 @@
 
 | Role | Value | Use |
 |------|--------|-----|
-| Page background | `#0a0e1a` (`--bg-primary`) | `landing-page`, body |
+| Page background | `#0a0e1a` (`--bg-primary`) | `landing-page`, `dashboard-shell`, body |
 | Secondary surface | `#111827` (`--bg-secondary`) | Sections, muted bands |
 | Glass card | `rgba(17,24,39,0.9)` + `--border-glass` | `.card` inside `.landing-page`, `.glass-card` |
 | Primary CTA | Amber gradient `--accent-500` → `--accent-600` | `.btn-primary` |
@@ -26,11 +26,13 @@
 | Class | Use |
 |-------|-----|
 | `.landing-page` | Marketing home, auth, **booking** — dark bg + light text |
+| `.dashboard-shell` | Patient/doctor dashboard — sidebar, header, cards, tables |
 | `.glass-card` | Hero panels, feature blocks on home |
 | `.booking-page` | Booking flow shell + ambient glow (with `.landing-page`) |
 | `.clinical-panel` | Dark glass panels (booking cards, success modal) |
 | `.booking-option` / `.booking-option--selected` | Selectable rows on booking steps |
-| `.card` (inside `.landing-page` / `.booking-page`) | Dark glass override vs dashboard white `.card` |
+| `.card` (inside `.landing-page` / `.booking-page` / `.dashboard-shell`) | Dark glass panels |
+| `.dashboard-shell__sidebar` / `__header` | Glass nav surfaces |
 
 ## Components
 
@@ -44,4 +46,5 @@
 - `src/app/page.tsx` — landing (`.landing-page`)
 - `src/app/login/page.tsx` — auth (`.landing-page` + shadcn)
 - `src/app/booking/page.tsx` — booking flow (`.landing-page`)
+- `src/app/dashboard/layout.tsx` — dashboard shell (`.dashboard-shell`)
 - `src/lib/translations.ts` — i18n copy

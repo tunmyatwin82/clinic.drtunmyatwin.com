@@ -87,8 +87,8 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t.nav.dashboard}</h1>
-          <p className="text-muted-foreground">{t.dashboard.welcomeUser.replace('{name}', currentUser.name)}</p>
+          <h1 className="myanmar-heading text-2xl font-bold text-slate-100">{t.nav.dashboard}</h1>
+          <p className="myanmar-text text-slate-400">{t.dashboard.welcomeUser.replace('{name}', currentUser.name)}</p>
         </div>
         <Link href="/booking" className="btn-primary flex items-center gap-2">
           <Calendar className="w-4 h-4" />
