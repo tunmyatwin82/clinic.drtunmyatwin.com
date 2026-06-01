@@ -3,13 +3,12 @@
 import { Suspense, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
   Eye,
   EyeOff,
-  Mail,
   Lock,
   User,
   Phone,
@@ -23,26 +22,13 @@ import { LenisRegisterRoot } from '@/components/auth/lenis-register-root';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 
 /** Register — clinical tokens; see /DESIGN.md */
 const CLINICAL_FIELD =
   'h-11 border border-input bg-card text-[15px] text-foreground placeholder:text-muted-foreground shadow-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 md:text-[15px] aria-invalid:border-destructive aria-invalid:ring-destructive/25';
-
-const CLINICAL_SELECT_TRIGGER =
-  'h-11 w-full min-w-0 justify-between border border-input bg-card text-[15px] text-foreground shadow-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 aria-invalid:border-destructive';
-
-const CLINICAL_SELECT_POPUP = 'border border-border bg-card text-foreground shadow-lg';
 
 /** Same-origin relative paths only — blocks open redirects. */
 function getSafeRedirectParam(raw: string | null): string {
@@ -69,12 +55,6 @@ function buildRegisterSchema(auth: Record<string, string>) {
   return z
     .object({
       name: z.string().trim().min(2, auth.validationNameMin),
-      email: z.string().trim().superRefine((val, ctx) => {
-        if (val === '') return;
-        if (!z.string().email().safeParse(val).success) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: auth.validationEmailOptional });
-        }
-      }),
       phone: z
         .string()
         .trim()
@@ -85,31 +65,6 @@ function buildRegisterSchema(auth: Record<string, string>) {
         }, { message: auth.validationPhone }),
       password: z.string().min(6, auth.validationPasswordMin),
       confirmPassword: z.string(),
-      gender: z.enum(['male', 'female', 'other']),
-      dateOfBirth: z.string().optional(),
-      acceptedTerms: z.boolean().refine((v) => v === true, { message: auth.validationTerms }),
-    })
-    .superRefine((data, ctx) => {
-      if (data.dateOfBirth && data.dateOfBirth.trim() !== '') {
-        const d = new Date(data.dateOfBirth);
-        if (Number.isNaN(d.getTime())) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: auth.validationDobFuture,
-            path: ['dateOfBirth'],
-          });
-          return;
-        }
-        const endOfToday = new Date();
-        endOfToday.setHours(23, 59, 59, 999);
-        if (d > endOfToday) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: auth.validationDobFuture,
-            path: ['dateOfBirth'],
-          });
-        }
-      }
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: auth.validationPasswordMismatch,
@@ -124,7 +79,6 @@ function RegisterFormInner() {
   const searchParams = useSearchParams();
   const { addUser } = useAppStore();
   const { language, setLanguage, t } = useLanguage();
-  const tc = t.clinical;
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -140,12 +94,9 @@ function RegisterFormInner() {
     () =>
       buildRegisterSchema({
         validationNameMin: t.auth.validationNameMin,
-        validationEmailOptional: t.auth.validationEmailOptional,
         validationPhone: t.auth.validationPhone,
         validationPasswordMin: t.auth.validationPasswordMin,
         validationPasswordMismatch: t.auth.validationPasswordMismatch,
-        validationTerms: t.auth.validationTerms,
-        validationDobFuture: t.auth.validationDobFuture,
         registrationEmailTaken: t.auth.registrationEmailTaken,
         registrationPhoneTaken: t.auth.registrationPhoneTaken,
         registrationFailed: t.auth.registrationFailed,
@@ -155,20 +106,15 @@ function RegisterFormInner() {
 
   const {
     register,
-    control,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: '',
-      email: '',
       phone: '',
-      gender: 'male',
-      dateOfBirth: '',
       password: '',
       confirmPassword: '',
-      acceptedTerms: false,
     },
   });
 
@@ -177,13 +123,10 @@ function RegisterFormInner() {
     setSubmitError('');
     setSuccessFlash(false);
 
-    const emailTrimmed = data.email.trim();
     const payload = {
-      email: emailTrimmed === '' ? undefined : emailTrimmed,
       name: data.name.trim(),
       phone: data.phone.trim(),
-      gender: data.gender,
-      date_of_birth: data.dateOfBirth?.trim() ? new Date(data.dateOfBirth) : null,
+      gender: 'other' as const,
       password: data.password,
     };
 
@@ -206,13 +149,12 @@ function RegisterFormInner() {
         };
         addUser({
           id: apiUser.id,
-          email: apiUser.email || emailTrimmed || '',
+          email: apiUser.email || '',
           name: data.name.trim(),
           phone: data.phone.trim(),
           role: 'patient' as const,
           password: data.password,
-          dateOfBirth: data.dateOfBirth?.trim() ? new Date(data.dateOfBirth) : undefined,
-          gender: data.gender,
+          gender: 'other',
           createdAt: new Date(),
           updatedAt: new Date(),
         });
@@ -237,7 +179,6 @@ function RegisterFormInner() {
     }
   };
 
-  const todayISO = useMemo(() => new Date().toISOString().split('T')[0], []);
   const loadingLabel = language === 'en' ? 'Submitting' : 'ပို့နေသည်';
 
   const marqueeText =
@@ -246,6 +187,107 @@ function RegisterFormInner() {
       : 'အွန်လိုင်းဆွေးနွေး · လုံခြုံမှုအရ မှတ်ပုံတင် · ဒေါက်တာထွန်းမြတ်ဝင်း · ဗီဒီယိုဆွေး · သီးခြားခြုံထား · ';
   const focusRingEz =
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+
+  const brandName = language === 'en' ? 'Dr. Tun Myat Win' : 'ဒေါက်တာထွန်းမြတ်ဝင်း';
+  const serviceBadge =
+    language === 'en' ? 'Online telemedicine' : 'အွန်လိုင်းဆွေးနွေးကုသမှု';
+
+  const signupGuideTitle =
+    language === 'en' ? 'How to sign up' : 'စာရင်းသွင်းနည်း';
+  const signupSteps =
+    language === 'en'
+      ? [
+          'Enter your full name as on your ID.',
+          'Use the phone number you can receive calls on.',
+          'Choose a password you will remember (at least 6 characters).',
+        ]
+      : [
+          'မှတ်ပုံတင်အမည် အပြည့်အစုံ ထည့်ပါ။',
+          'ခေါ်ဆိုမှုလက်ခံနိုင်သော ဖုန်းနံပါတ် ထည့်ပါ။',
+          'မှတ်သားလွယ်သော စကားဝှက် (အနည်းဆုံး ၆ လုံး) သတ်မှတ်ပါ။',
+        ];
+
+  const afterAccountTitle =
+    language === 'en' ? 'After you have an account' : 'အကောင့်ရှိပြီးနောက်';
+  const afterAccountPoints =
+    language === 'en'
+      ? [
+          'Book video consultations online in a few taps.',
+          'View visit notes and prescriptions in one place.',
+          'Message the clinic for follow-up when you need clarity.',
+        ]
+      : [
+          'အွန်လိုင်းမှ ဗီဒီယိုဆွေးနွေးမှု ချိန်းဆိုနိုင်ပါသည်။',
+          'ဆွေးနွေးမှတ်တမ်းနှင့် ဆေးညွှန်းကို တစ်နေရာတည်းတွင် ကြည့်နိုင်ပါသည်။',
+          'နောက်တွဲမေးခွန်း ရှိလျှင် ဆက်သွယ်မေးမြန်းနိုင်ပါသည်။',
+        ];
+
+  const formSubtitle =
+    language === 'en'
+      ? 'Phone and password only — done in under a minute.'
+      : 'ဖုန်းနံပါတ်နှင့် စကားဝှက်သာ — မိနစ်အနည်းငယ်အတွင်း ပြီးမြောက်ပါသည်။';
+
+  const brandBlock = (compact = false) => {
+    const iconSize = compact ? 'h-11 w-11' : 'h-12 w-12';
+    const iconPad = compact ? 'pl-14' : 'pl-[3.75rem]';
+
+    return (
+      <div className="w-full">
+        <Link
+          href="/"
+          className={`group flex w-full items-center gap-3 rounded-xl text-left ${focusRingEz}`}
+        >
+          <div
+            className={`flex shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02] ${iconSize}`}
+          >
+            <Stethoscope className={compact ? 'size-6' : 'h-6 w-6'} strokeWidth={2} aria-hidden />
+          </div>
+          <span
+            className={`myanmar-heading block min-w-0 flex-1 font-bold tracking-tight text-foreground ${compact ? 'text-lg' : 'text-xl md:text-2xl'}`}
+          >
+            {brandName}
+          </span>
+        </Link>
+        <div className={`${iconPad} pt-2.5`}>
+          <span className="inline-flex w-fit max-w-full items-center rounded-full border border-emerald-500/35 bg-emerald-500/10 px-4 py-2 text-sm font-medium leading-snug text-emerald-400">
+            {serviceBadge}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
+  const sidebarContent = (
+    <div className="space-y-8">
+      <div>{brandBlock()}</div>
+
+      <div className="space-y-3">
+        <h2 className="myanmar-heading text-lg font-semibold text-foreground">{signupGuideTitle}</h2>
+        <ol className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+          {signupSteps.map((step, index) => (
+            <li key={step} className="flex gap-3">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+                {index + 1}
+              </span>
+              <span className="myanmar-text text-pretty text-foreground/90">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="space-y-3">
+        <h2 className="myanmar-heading text-lg font-semibold text-foreground">{afterAccountTitle}</h2>
+        <ul className="space-y-3 text-sm leading-relaxed">
+          {afterAccountPoints.map((line) => (
+            <li key={line} className="flex gap-3">
+              <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-emerald-500" aria-hidden strokeWidth={2} />
+              <span className="myanmar-text text-pretty text-muted-foreground">{line}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 
   return (
     <LenisRegisterRoot>
@@ -258,82 +300,25 @@ function RegisterFormInner() {
 
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-14">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-start lg:gap-16 xl:gap-24">
-            <aside className="sticky top-28 hidden space-y-7 lg:block">
-              <Link
-                href="/"
-                className={`group inline-flex items-center gap-3 rounded-xl text-left ${focusRingEz}`}
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02]">
-                  <Stethoscope className="h-6 w-6" strokeWidth={2} aria-hidden />
-                </div>
-                <span className="text-balance text-xl font-bold tracking-tight text-foreground md:text-2xl">
-                  {language === 'en' ? 'Dr. Tun Myat Win' : 'ဒေါက်တာထွန်းမြတ်ဝင်း'}
-                </span>
-              </Link>
-
-              <p className="inline-flex items-center rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-secondary">
-                {language === 'en' ? 'Online telemedicine' : 'အွန်လိုင်း ဆွေးနွေးကုသမှု'}
-              </p>
-
-              <h1 className="text-pretty text-[clamp(1.75rem,4vw,2.85rem)] font-semibold leading-snug tracking-tight text-foreground">
-                {language === 'en' ? `${t.auth.signUp}. ` : t.auth.signUp}
-                {language === 'en' && (
-                  <span className="text-muted-foreground"> stay in rhythm.</span>
-                )}
-              </h1>
-
-              <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
-                {language === 'en'
-                  ? 'Enter your details to book consultations online.'
-                  : 'အွန်လိုင်းဆွေးနွေးမှု စာရင်းသွင်းရန် အချက်အလက် ဖြည့်ပါ။'}
-              </p>
-
-              <ul className="space-y-4 text-sm leading-relaxed text-foreground">
-                {[tc.moonStrip1, tc.moonStrip2, tc.moonStrip3].map((line) => (
-                  <li key={line} className="flex gap-3">
-                    <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-secondary" aria-hidden strokeWidth={2} />
-                    <span className="text-pretty">{line}</span>
-                  </li>
-                ))}
-              </ul>
-            </aside>
+            <aside className="sticky top-28 hidden lg:block">{sidebarContent}</aside>
 
             <div className="w-full lg:max-w-lg xl:max-w-xl">
-            <div className="mb-8 text-center lg:hidden">
-              <Link
-                href="/"
-                className={`mx-auto mb-5 inline-flex flex-col items-center gap-2 rounded-xl ${focusRingEz}`}
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
-                  <Stethoscope className="size-6" strokeWidth={2} aria-hidden />
-                </div>
-                <span className="text-lg font-semibold tracking-tight text-foreground">
-                  {language === 'en' ? 'Dr. Tun Myat Win' : 'ဒေါက်တာထွန်းမြတ်ဝင်း'}
-                </span>
-              </Link>
+            <div className="mb-6 lg:hidden">{brandBlock(true)}</div>
 
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">{t.auth.signUp}</h1>
-              <p className="mt-2 text-balance text-sm text-muted-foreground">
-                {language === 'en'
-                  ? 'Enter your details to book consultations online.'
-                  : 'အွန်လိုင်းဆွေးနွေးမှု စာရင်းသွင်းရန် အချက်အလက် ဖြည့်ပါ။'}
-              </p>
-              <ul className="mt-6 space-y-3 border-t border-border pt-6 text-left text-sm font-medium text-foreground lg:hidden">
-                {[tc.moonStrip1, tc.moonStrip2, tc.moonStrip3].map((line) => (
-                  <li key={line} className="flex gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-secondary" aria-hidden strokeWidth={2} />
-                    <span className="text-pretty">{line}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="mb-6 flex justify-center lg:justify-end">
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <h1 className="myanmar-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  {t.auth.signUp}
+                </h1>
+                <p className="myanmar-text mt-2 text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
+                  {formSubtitle}
+                </p>
+              </div>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setLanguage(language === 'en' ? 'my' : 'en')}
-                className={`rounded-full border-border px-4 py-2 text-sm font-medium shadow-sm ${focusRingEz} cursor-pointer`}
+                className={`shrink-0 rounded-full border-border px-4 py-2 text-sm font-medium shadow-sm ${focusRingEz} cursor-pointer`}
               >
                 <Globe className="mr-1.5 text-primary" aria-hidden />
                 {language === 'en' ? 'မြန်မာ' : 'English'}
@@ -384,30 +369,6 @@ function RegisterFormInner() {
                       <FieldError id="reg-name-error" errors={[errors.name]} />
                     </Field>
 
-                    <Field data-invalid={!!errors.email}>
-                      <FieldLabel htmlFor="reg-email">
-                        {t.auth.email}{' '}
-                        <span className="font-normal !text-muted-foreground">{t.auth.emailOptionalHint}</span>
-                      </FieldLabel>
-                      <div className="relative">
-                        <Mail
-                          className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                          aria-hidden
-                        />
-                        <Input
-                          id="reg-email"
-                          {...register('email')}
-                          type="email"
-                          autoComplete="email"
-                          className={CLINICAL_FIELD + ' pl-9'}
-                          placeholder="you@example.com"
-                          aria-invalid={!!errors.email}
-                          aria-describedby={errors.email ? 'reg-email-error' : undefined}
-                        />
-                      </div>
-                      <FieldError id="reg-email-error" errors={[errors.email]} />
-                    </Field>
-
                     <Field data-invalid={!!errors.phone}>
                       <FieldLabel htmlFor="reg-phone">{t.auth.phone}</FieldLabel>
                       <div className="relative">
@@ -429,46 +390,6 @@ function RegisterFormInner() {
                       </div>
                       <FieldError id="reg-phone-error" errors={[errors.phone]} />
                     </Field>
-
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <Controller
-                        name="gender"
-                        control={control}
-                        render={({ field, fieldState }) => (
-                          <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor="reg-gender">{t.auth.gender}</FieldLabel>
-                            <Select value={field.value} onValueChange={field.onChange}>
-                              <SelectTrigger
-                                id="reg-gender"
-                                className={CLINICAL_SELECT_TRIGGER}
-                                aria-invalid={fieldState.invalid}
-                              >
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className={CLINICAL_SELECT_POPUP}>
-                                <SelectItem value="male">{t.auth.male}</SelectItem>
-                                <SelectItem value="female">{t.auth.female}</SelectItem>
-                                <SelectItem value="other">{t.auth.other}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FieldError errors={[fieldState.error]} />
-                          </Field>
-                        )}
-                      />
-                      <Field data-invalid={!!errors.dateOfBirth}>
-                        <FieldLabel htmlFor="reg-dob">{t.auth.dateOfBirth}</FieldLabel>
-                        <Input
-                          id="reg-dob"
-                          {...register('dateOfBirth')}
-                          type="date"
-                          max={todayISO}
-                          className={CLINICAL_FIELD}
-                          aria-invalid={!!errors.dateOfBirth}
-                          aria-describedby={errors.dateOfBirth ? 'reg-dob-error' : undefined}
-                        />
-                        <FieldError id="reg-dob-error" errors={[errors.dateOfBirth]} />
-                      </Field>
-                    </div>
 
                     <Field data-invalid={!!errors.password}>
                       <FieldLabel htmlFor="reg-password">{t.auth.password}</FieldLabel>
@@ -536,32 +457,6 @@ function RegisterFormInner() {
                       <FieldError id="reg-confirm-error" errors={[errors.confirmPassword]} />
                     </Field>
 
-                    <Controller
-                      name="acceptedTerms"
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <Field data-invalid={fieldState.invalid}>
-                          <div className="flex items-start gap-3">
-                            <Checkbox
-                              id="reg-terms"
-                              checked={field.value}
-                              onCheckedChange={(checked) => field.onChange(checked)}
-                              aria-invalid={fieldState.invalid}
-                              aria-describedby={fieldState.invalid ? 'reg-terms-error' : undefined}
-                              className="mt-1 border-input data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground"
-                            />
-                            <FieldLabel
-                              htmlFor="reg-terms"
-                              className="cursor-pointer leading-snug font-normal text-muted-foreground hover:text-foreground"
-                            >
-                              {t.auth.termsConsentLabel}
-                            </FieldLabel>
-                          </div>
-                          <FieldError id="reg-terms-error" errors={[fieldState.error]} />
-                        </Field>
-                      )}
-                    />
-
                     <Button
                       type="submit"
                       form="register-form"
@@ -595,9 +490,36 @@ function RegisterFormInner() {
                 </p>
               </CardFooter>
             </Card>
-          </div>
+
+            <div className="mt-8 space-y-6 rounded-2xl border border-border bg-card/50 p-5 lg:hidden">
+              <div className="space-y-3">
+                <h2 className="myanmar-heading text-base font-semibold text-foreground">{signupGuideTitle}</h2>
+                <ol className="space-y-2.5 text-sm">
+                  {signupSteps.map((step, index) => (
+                    <li key={step} className="flex gap-3 text-muted-foreground">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[11px] font-bold text-primary">
+                        {index + 1}
+                      </span>
+                      <span className="myanmar-text">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div className="space-y-3 border-t border-border pt-5">
+                <h2 className="myanmar-heading text-base font-semibold text-foreground">{afterAccountTitle}</h2>
+                <ul className="space-y-2.5 text-sm">
+                  {afterAccountPoints.map((line) => (
+                    <li key={line} className="flex gap-2.5 text-muted-foreground">
+                      <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-500" aria-hidden />
+                      <span className="myanmar-text">{line}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
       </div>
     </LenisRegisterRoot>
   );
