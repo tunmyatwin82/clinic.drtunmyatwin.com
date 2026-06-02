@@ -19,6 +19,7 @@ import {
 import { useAppStore } from '@/store';
 import type { Appointment } from '@/types';
 import { useLanguage } from '@/lib/LanguageContext';
+import { healthRecordLabel, isImageDataUrl } from '@/lib/booking-files';
 
 type ApptFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
 
@@ -405,15 +406,18 @@ export default function AppointmentsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   {selectedAppointment.healthRecords.map((record: string, index: number) => (
                     <div key={index} className="border border-border rounded-lg overflow-hidden">
-                      {record.startsWith('data:image') ? (
+                      {isImageDataUrl(record) ? (
                         <img
                           src={record}
-                          alt={`Health record ${index + 1}`}
+                          alt={healthRecordLabel(record, index)}
                           className="w-full h-48 object-cover"
                         />
                       ) : (
-                        <div className="h-48 bg-muted flex items-center justify-center">
+                        <div className="flex h-48 flex-col items-center justify-center gap-2 bg-muted px-3">
                           <FileText className="w-12 h-12 text-muted-foreground" />
+                          <span className="text-center text-sm text-muted-foreground line-clamp-2">
+                            {healthRecordLabel(record, index)}
+                          </span>
                         </div>
                       )}
                     </div>

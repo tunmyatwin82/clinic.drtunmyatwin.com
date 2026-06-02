@@ -27,6 +27,16 @@ import { useLanguage } from '@/lib/LanguageContext';
 import { useAuthHydrated } from '@/hooks/use-auth-hydrated';
 import { format, addDays } from 'date-fns';
 import { Spinner } from '@/components/ui/spinner';
+import {
+  formatFileSize,
+  healthRecordLabel,
+  isImageDataUrl,
+  MAX_FILE_BYTES,
+  MAX_HEALTH_RECORD_FILES,
+  parseHealthRecordMeta,
+  prepareHealthRecordForStorage,
+  preparePaymentScreenshot,
+} from '@/lib/booking-files';
 
 const bookingSchema = z.object({
   consultationType: z.enum(['video', 'audio', 'chat']),
@@ -71,8 +81,9 @@ export default function BookingPage() {
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [paymentScreenshotPreview, setPaymentScreenshotPreview] = useState<string>('');
-  const [healthRecords, setHealthRecords] = useState<File[]>([]);
   const [healthRecordPreviews, setHealthRecordPreviews] = useState<string[]>([]);
+  const [isUploadingRecords, setIsUploadingRecords] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const doctor = getDoctor('dr-1');
 
@@ -122,15 +133,30 @@ export default function BookingPage() {
     setShowPaymentDetails(true);
   };
 
-  const handlePaymentScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePaymentScreenshotChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setPaymentScreenshot(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPaymentScreenshotPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    if (file.size > MAX_FILE_BYTES) {
+      alert(
+        language === 'en'
+          ? `Image must be under ${formatFileSize(MAX_FILE_BYTES)}.`
+          : `ဓာတ်ပုံအရွယ်အစားသည် ${formatFileSize(MAX_FILE_BYTES)} အောက်ဖြစ်ရပါမည်။`,
+      );
+      e.target.value = '';
+      return;
+    }
+    setPaymentScreenshot(file);
+    try {
+      const preview = await preparePaymentScreenshot(file);
+      setPaymentScreenshotPreview(preview);
+    } catch {
+      alert(
+        language === 'en'
+          ? 'Could not read the payment screenshot.'
+          : 'ငွေပေးချေမှု ဓာတ်ပုံ ဖတ်ရှု၍ မရပါ။',
+      );
+      setPaymentScreenshot(null);
+      setPaymentScreenshotPreview('');
     }
   };
 
@@ -139,22 +165,54 @@ export default function BookingPage() {
     setPaymentScreenshotPreview('');
   };
 
-  const handleHealthRecordsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setHealthRecords([...healthRecords, ...files]);
+  const handleHealthRecordsChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const picked = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (picked.length === 0) return;
 
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setHealthRecordPreviews(prev => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
+    const remaining = MAX_HEALTH_RECORD_FILES - healthRecordPreviews.length;
+    if (remaining <= 0) {
+      alert(
+        language === 'en'
+          ? `You can upload up to ${MAX_HEALTH_RECORD_FILES} files.`
+          : `ဖိုင် ${MAX_HEALTH_RECORD_FILES} ခုသာ တင်နိုင်ပါသည်။`,
+      );
+      return;
+    }
+
+    const files = picked.slice(0, remaining);
+    setIsUploadingRecords(true);
+    setSubmitError('');
+
+    try {
+      const prepared: string[] = [];
+      for (const file of files) {
+        if (file.size > MAX_FILE_BYTES) {
+          alert(
+            language === 'en'
+              ? `${file.name} is too large (max ${formatFileSize(MAX_FILE_BYTES)}).`
+              : `${file.name} — ${formatFileSize(MAX_FILE_BYTES)} ထက်မကြီးရ`,
+          );
+          continue;
+        }
+        prepared.push(await prepareHealthRecordForStorage(file));
+      }
+      if (prepared.length > 0) {
+        setHealthRecordPreviews((prev) => [...prev, ...prepared]);
+      }
+    } catch {
+      alert(
+        language === 'en'
+          ? 'Could not process one or more files.'
+          : 'ဖိုင်တစ်ခု သို့မဟုတ် တစ်ခုထက်ပို လုပ်ဆောင်၍ မရပါ။',
+      );
+    } finally {
+      setIsUploadingRecords(false);
+    }
   };
 
   const handleRemoveHealthRecord = (index: number) => {
-    setHealthRecords(healthRecords.filter((_, i) => i !== index));
-    setHealthRecordPreviews(healthRecordPreviews.filter((_, i) => i !== index));
+    setHealthRecordPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const copyToClipboard = (text: string) => {
@@ -167,7 +225,6 @@ export default function BookingPage() {
       return;
     }
 
-    // Get form data
     const formData = getValues();
 
     if (!formData.date || !formData.time || !formData.reason) {
@@ -176,13 +233,12 @@ export default function BookingPage() {
     }
 
     setIsProcessing(true);
+    setSubmitError('');
 
-    // Convert payment screenshot to base64
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const screenshotUrl = reader.result as string;
+    try {
+      const screenshotUrl =
+        paymentScreenshotPreview || (await preparePaymentScreenshot(paymentScreenshot));
 
-      // Create appointment first
       const appointment = createAppointment({
         patientId: currentUser?.id || '',
         doctorId: 'dr-1',
@@ -194,21 +250,20 @@ export default function BookingPage() {
         reason: formData.reason,
         notes: formData.notes || '',
         paymentStatus: 'pending',
-        paymentAmount: consultationTypes.find(t => t.type === formData.consultationType)?.price || 15000,
+        paymentAmount: consultationTypes.find((ct) => ct.type === formData.consultationType)?.price || 15000,
         paymentMethod: selectedPayment,
         transactionId: `TXN-${Date.now()}`,
-        healthRecords: healthRecordPreviews,
+        healthRecords: healthRecordPreviews.length > 0 ? healthRecordPreviews : undefined,
       });
 
-      // Create payment with appointment ID
-      const payment = createPayment({
+      createPayment({
         appointmentId: appointment.id,
         patientId: currentUser?.id || '',
-        amount: consultationTypes.find(t => t.type === formData.consultationType)?.price || 15000,
+        amount: consultationTypes.find((ct) => ct.type === formData.consultationType)?.price || 15000,
         currency: 'MMK',
         method: selectedPayment as 'kbzpay' | 'wave' | 'ayapay' | 'cash',
         status: 'pending',
-        screenshotUrl: screenshotUrl,
+        screenshotUrl,
       });
 
       addNotification({
@@ -219,12 +274,17 @@ export default function BookingPage() {
         read: false,
       });
 
-      setTimeout(() => {
-        setIsProcessing(false);
-        setPaymentSuccess(true);
-      }, 2000);
-    };
-    reader.readAsDataURL(paymentScreenshot);
+      setPaymentSuccess(true);
+    } catch (err) {
+      console.error('Booking submit failed:', err);
+      setSubmitError(
+        language === 'en'
+          ? 'Could not complete booking. Try smaller photos or fewer files.'
+          : 'ချိန်းဆိုမှု မပြီးပါ။ ဓာတ်ပုံအရွယ်အစား သို့မဟုတ် ဖိုင်အရေအတွက် လျှော့ကြည့်ပါ။',
+      );
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (!authHydrated) {
@@ -448,21 +508,43 @@ export default function BookingPage() {
                           onChange={handleHealthRecordsChange}
                           className="hidden"
                         />
-                        <label htmlFor="healthRecords" className="cursor-pointer">
-                          <Upload className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
-                          <p className="text-sm text-muted-foreground">ဖိုင်များ ရွေးချယ်ပါ သို့မဟုတ် ဒရော့လှုပ်ပါ</p>
-                          <p className="mt-1 text-xs text-muted-foreground/80">ဓာတ်ပုံ, PDF, စာသား ဖိုင်များ လက်ခံပါသည်</p>
+                        <label
+                          htmlFor="healthRecords"
+                          className={`cursor-pointer ${isUploadingRecords ? 'pointer-events-none opacity-60' : ''}`}
+                        >
+                          {isUploadingRecords ? (
+                            <Spinner className="mx-auto mb-2 size-10 text-primary-400" aria-hidden />
+                          ) : (
+                            <Upload className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
+                          )}
+                          <p className="text-sm text-muted-foreground">
+                            {isUploadingRecords
+                              ? language === 'en'
+                                ? 'Processing files…'
+                                : 'ဖိုင်များ လုပ်ဆောင်နေပါသည်…'
+                              : 'ဖိုင်များ ရွေးချယ်ပါ သို့မဟုတ် ဒရော့လှုပ်ပါ'}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground/80">
+                            ဓာတ်ပုံ (အလိုအလျောက် ချုံ့ပေးသည်) · PDF/စာသား · ဖိုင် {MAX_HEALTH_RECORD_FILES} ခုအထိ · {formatFileSize(MAX_FILE_BYTES)} အထိ
+                          </p>
                         </label>
                       </div>
                       {healthRecordPreviews.length > 0 && (
                         <div className="mt-4 grid grid-cols-3 gap-4">
-                          {healthRecordPreviews.map((preview, index) => (
+                          {healthRecordPreviews.map((preview, index) => {
+                            const meta = parseHealthRecordMeta(preview);
+                            return (
                             <div key={index} className="relative">
-                              {preview.startsWith('data:image') ? (
+                              {isImageDataUrl(preview) ? (
                                 <img src={preview} alt={`Health record ${index + 1}`} className="w-full h-24 object-cover rounded-lg" />
                               ) : (
-                                <div className="flex h-24 w-full items-center justify-center rounded-lg bg-muted/80">
-                                  <span className="text-xs text-muted-foreground">{healthRecords[index].name}</span>
+                                <div className="flex h-24 w-full flex-col items-center justify-center gap-1 rounded-lg bg-muted/80 px-2">
+                                  <span className="text-center text-xs text-muted-foreground line-clamp-2">
+                                    {healthRecordLabel(preview, index)}
+                                  </span>
+                                  {meta && (
+                                    <span className="text-[10px] text-muted-foreground/70">{formatFileSize(meta.size)}</span>
+                                  )}
                                 </div>
                               )}
                               <button
@@ -472,7 +554,8 @@ export default function BookingPage() {
                                 <X className="w-4 h-4" />
                               </button>
                             </div>
-                          ))}
+                          );
+                          })}
                         </div>
                       )}
                     </div>
@@ -586,6 +669,12 @@ export default function BookingPage() {
                   </div>
                 )}
 
+                {submitError && (
+                  <p className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                    {submitError}
+                  </p>
+                )}
+
                 <div className="mt-8 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
                   {step > 1 ? (
                     <button
@@ -611,7 +700,7 @@ export default function BookingPage() {
                     <button
                       type="button"
                       onClick={handlePayment}
-                      disabled={isProcessing}
+                      disabled={isProcessing || isUploadingRecords}
                       className="btn-success order-1 flex min-h-11 w-full flex-wrap items-center justify-center gap-2 sm:order-2 sm:ml-auto sm:w-auto sm:max-w-md"
                     >
                       {isProcessing ? (
