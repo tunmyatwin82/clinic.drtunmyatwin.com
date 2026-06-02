@@ -26,8 +26,12 @@ export default function PatientsPage() {
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/login?redirect=/dashboard/patients');
+      return;
     }
-  }, [isAuthenticated, router]);
+    if (currentUser?.role === 'patient') {
+      router.replace('/dashboard/appointments');
+    }
+  }, [isAuthenticated, currentUser, router]);
 
   if (!isAuthenticated || !currentUser) {
     return null;

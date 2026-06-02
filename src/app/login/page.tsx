@@ -88,7 +88,12 @@ function LoginFormInner() {
     try {
       const success = await login(data.emailOrPhone, data.password);
       if (success) {
-        router.replace(redirectAfterLogin);
+        const user = useAppStore.getState().currentUser;
+        const dest =
+          redirectAfterLogin.startsWith('/booking') && user?.role !== 'patient'
+            ? '/dashboard/appointments'
+            : redirectAfterLogin;
+        router.replace(dest);
       } else {
         setError(t.auth.loginInvalidCredentials);
       }

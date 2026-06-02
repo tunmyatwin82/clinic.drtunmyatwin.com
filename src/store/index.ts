@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import { User, Patient, Doctor, Admin, Appointment, Consultation, Payment, Message, Notification } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 import { normalizeAuthIdentifier, userMatchesIdentifier } from '@/lib/auth-credentials';
+import { syncRoleCookie } from '@/lib/auth-cookie';
 
 const DEMO_USER_IDS = new Set(['dr-1', 'admin-1', 'patient-1']);
 
@@ -147,6 +148,7 @@ export const useAppStore = create<AppState>()(
 
         if (localUser?.password === password) {
           set({ users, currentUser: localUser, isAuthenticated: true });
+          syncRoleCookie(localUser.role);
           return true;
         }
 
@@ -199,6 +201,7 @@ export const useAppStore = create<AppState>()(
                 };
               });
 
+              syncRoleCookie(userToAdd.role);
               return true;
             }
           }
@@ -209,7 +212,10 @@ export const useAppStore = create<AppState>()(
         return false;
       },
 
-      logout: () => set({ currentUser: null, isAuthenticated: false }),
+      logout: () => {
+        syncRoleCookie(null);
+        set({ currentUser: null, isAuthenticated: false });
+      },
 
       setCurrentUser: (user) => set({ currentUser: user, isAuthenticated: !!user }),
 

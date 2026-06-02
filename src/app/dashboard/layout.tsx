@@ -19,12 +19,16 @@ import { useAuthHydrated } from '@/hooks/use-auth-hydrated';
 import { Spinner } from '@/components/ui/spinner';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Appointments', href: '/dashboard/appointments', icon: Calendar },
-  { name: 'Patients', href: '/dashboard/patients', icon: Users },
-  { name: 'Messages', href: '/dashboard/messages', icon: MessageCircle },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['patient', 'doctor', 'admin'] as const },
+  { name: 'Appointments', href: '/dashboard/appointments', icon: Calendar, roles: ['patient', 'doctor', 'admin'] as const },
+  { name: 'Patients', href: '/dashboard/patients', icon: Users, roles: ['doctor', 'admin'] as const },
+  { name: 'Messages', href: '/dashboard/messages', icon: MessageCircle, roles: ['patient', 'doctor', 'admin'] as const },
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings, roles: ['patient', 'doctor', 'admin'] as const },
 ];
+
+function navItemsForRole(role: 'patient' | 'doctor' | 'admin') {
+  return navigation.filter((item) => (item.roles as readonly string[]).includes(role));
+}
 
 export default function DashboardLayout({
   children,
@@ -61,8 +65,9 @@ export default function DashboardLayout({
   const notifications = getNotifications(currentUser.id);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
+  const visibleNav = navItemsForRole(currentUser.role);
   const pageTitle =
-    navigation.find((item) => item.href === pathname)?.name ?? 'Dashboard';
+    visibleNav.find((item) => item.href === pathname)?.name ?? 'Dashboard';
 
   return (
     <div className="dashboard-shell min-h-screen">
@@ -80,7 +85,7 @@ export default function DashboardLayout({
           </div>
 
           <nav className="flex-1 space-y-1 p-4">
-            {navigation.map((item) => {
+            {visibleNav.map((item) => {
               const isActive =
                 pathname === item.href ||
                 (item.href !== '/dashboard' && pathname.startsWith(item.href));

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { LanguageProvider } from "@/lib/LanguageContext";
+import { AuthCookieSync } from "@/components/auth-cookie-sync";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -51,7 +52,10 @@ export default function RootLayout({
             "'Padauk', 'Pyidaungsu', 'Myanmar Text', 'Noto Sans Myanmar', sans-serif",
         }}
       >
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          <AuthCookieSync />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

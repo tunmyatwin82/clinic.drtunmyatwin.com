@@ -19,7 +19,7 @@ import { useLanguage } from '@/lib/LanguageContext';
 export default function DashboardPage() {
   const router = useRouter();
   const { t } = useLanguage();
-  const { currentUser, isAuthenticated, appointments, getAppointments } = useAppStore();
+  const { currentUser, isAuthenticated, getAppointments } = useAppStore();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -47,7 +47,16 @@ export default function DashboardPage() {
     };
   }, [currentUser, getAppointments]);
 
-  const upcomingAppointments = appointments
+  const isPatient = currentUser?.role === 'patient';
+  const isStaff =
+    currentUser?.role === 'doctor' || currentUser?.role === 'admin';
+
+  const userScopedAppointments = useMemo(() => {
+    if (!currentUser) return [];
+    return getAppointments(currentUser.id, currentUser.role as 'patient' | 'doctor' | 'admin');
+  }, [currentUser, getAppointments]);
+
+  const upcomingAppointments = userScopedAppointments
     .filter(a => a.status === 'pending' || a.status === 'confirmed')
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 5);
@@ -90,10 +99,20 @@ export default function DashboardPage() {
           <h1 className="myanmar-heading text-2xl font-bold text-slate-100">{t.nav.dashboard}</h1>
           <p className="myanmar-text text-slate-400">{t.dashboard.welcomeUser.replace('{name}', currentUser.name)}</p>
         </div>
-        <Link href="/booking" className="btn-primary flex items-center gap-2">
-          <Calendar className="w-4 h-4" />
-          {t.dashboard.newAppointment}
-        </Link>
+        {isPatient ? (
+          <Link href="/booking" className="btn-primary flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            {t.dashboard.newAppointment}
+          </Link>
+        ) : isStaff ? (
+          <Link
+            href="/dashboard/appointments?filter=pending"
+            className="btn-primary flex items-center gap-2"
+          >
+            <Clock className="w-4 h-4" />
+            {t.dashboard.pendingAppointments}
+          </Link>
+        ) : null}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -125,9 +144,18 @@ export default function DashboardPage() {
               <div className="text-center py-8">
                 <Calendar className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
                 <p className="text-muted-foreground">{t.dashboard.noUpcoming}</p>
-                <Link href="/booking" className="btn-primary mt-4 inline-block">
-                  {t.dashboard.bookNow}
-                </Link>
+                {isPatient ? (
+                  <Link href="/booking" className="btn-primary mt-4 inline-block">
+                    {t.dashboard.bookNow}
+                  </Link>
+                ) : isStaff ? (
+                  <Link
+                    href="/dashboard/appointments?filter=pending"
+                    className="btn-primary mt-4 inline-block"
+                  >
+                    {t.dashboard.pendingAppointments}
+                  </Link>
+                ) : null}
               </div>
             ) : (
               <div className="space-y-4">
@@ -167,19 +195,35 @@ export default function DashboardPage() {
           </div>
           <div className="card-body">
             <div className="grid gap-4">
-              <Link
-                href="/booking"
-                className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card/60 hover:bg-muted transition-colors"
-              >
-                <div className="w-12 h-12 bg-sky-500 rounded-xl flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium text-foreground">{t.dashboard.quickActionBook}</p>
-                  <p className="text-sm text-muted-foreground">{t.dashboard.quickActionBookDesc}</p>
-                </div>
-                <ArrowRight className="w-5 h-5 text-sky-400" />
-              </Link>
+              {isPatient ? (
+                <Link
+                  href="/booking"
+                  className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card/60 hover:bg-muted transition-colors"
+                >
+                  <div className="w-12 h-12 bg-sky-500 rounded-xl flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-foreground">{t.dashboard.quickActionBook}</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.quickActionBookDesc}</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-sky-400" />
+                </Link>
+              ) : isStaff ? (
+                <Link
+                  href="/dashboard/appointments?filter=pending"
+                  className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card/60 hover:bg-muted transition-colors"
+                >
+                  <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-foreground">{t.dashboard.pendingAppointments}</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.pendingAppointmentsDesc}</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-amber-400" />
+                </Link>
+              ) : null}
 
               <Link
                 href="/dashboard/messages"

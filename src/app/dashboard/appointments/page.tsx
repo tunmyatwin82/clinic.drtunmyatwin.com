@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { format } from 'date-fns';
 import {
   Calendar,
@@ -22,8 +22,16 @@ import { useLanguage } from '@/lib/LanguageContext';
 
 type ApptFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
 
+function parseFilterParam(raw: string | null): ApptFilter {
+  if (raw === 'pending' || raw === 'confirmed' || raw === 'completed' || raw === 'cancelled') {
+    return raw;
+  }
+  return 'all';
+}
+
 export default function AppointmentsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useLanguage();
   const {
     currentUser,
@@ -34,7 +42,9 @@ export default function AppointmentsPage() {
     getUser,
     payments,
   } = useAppStore();
-  const [filter, setFilter] = useState<ApptFilter>('all');
+  const [filter, setFilter] = useState<ApptFilter>(() =>
+    parseFilterParam(searchParams.get('filter')),
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -45,6 +55,10 @@ export default function AppointmentsPage() {
       router.push('/login?redirect=/dashboard/appointments');
     }
   }, [isAuthenticated, router]);
+
+  useEffect(() => {
+    setFilter(parseFilterParam(searchParams.get('filter')));
+  }, [searchParams]);
 
   if (!isAuthenticated || !currentUser) {
     return null;

@@ -90,8 +90,12 @@ export default function BookingPage() {
     if (!authHydrated) return;
     if (!isAuthenticated) {
       router.replace('/login?redirect=/booking');
+      return;
     }
-  }, [authHydrated, isAuthenticated, router]);
+    if (currentUser && currentUser.role !== 'patient') {
+      router.replace('/dashboard/appointments');
+    }
+  }, [authHydrated, isAuthenticated, currentUser, router]);
 
   const availableDates = Array.from({ length: 14 }, (_, i) => {
     const date = addDays(new Date(), i + 1);
@@ -233,7 +237,7 @@ export default function BookingPage() {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || currentUser?.role !== 'patient') {
     return null;
   }
 

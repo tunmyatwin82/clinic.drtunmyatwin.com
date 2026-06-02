@@ -153,6 +153,8 @@ export const translations = {
       welcome: 'Welcome back',
       welcomeUser: 'Welcome back, {name}',
       newAppointment: 'New Appointment',
+      pendingAppointments: 'Pending bookings',
+      pendingAppointmentsDesc: 'Review and approve patient requests',
       stats: {
         totalAppointments: 'Total Appointments',
         completed: 'Completed',
@@ -566,6 +568,8 @@ export const translations = {
       welcome: 'ပြန်လာသည်ကို ကြိုဆိုပါသည်',
       welcomeUser: 'ကြိုဆိုပါတယ်၊ {name}',
       newAppointment: 'အချိန်အသစ်သတ်မှတ်မည်',
+      pendingAppointments: 'စောင့်ဆိုင်းနေသော ချိန်းဆိုမှုများ',
+      pendingAppointmentsDesc: 'လူနာတောင်းဆိုမှုများကို စစ်ဆေးပြီး အတည်ပြုပါ',
       stats: {
         totalAppointments: 'စုစုပေါင်းချိန်းဆိုမှုများ',
         completed: 'ပြီးစီးပြီး',
