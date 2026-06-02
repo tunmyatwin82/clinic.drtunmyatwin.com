@@ -42,7 +42,10 @@ interface AppState {
 
   createAppointment: (data: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>) => Appointment;
   updateAppointment: (id: string, data: Partial<Appointment>) => void;
-  confirmAppointment: (appointmentId: string) => void;
+  confirmAppointment: (
+    appointmentId: string,
+    consultationMeta?: Pick<Appointment, 'consultationChannel' | 'consultationLink' | 'consultationInstructions'>
+  ) => void;
   getAppointments: (userId: string, role: 'patient' | 'doctor' | 'admin') => Appointment[];
 
   createConsultation: (data: Omit<Consultation, 'id' | 'createdAt' | 'updatedAt'>) => Consultation;
@@ -270,14 +273,23 @@ export const useAppStore = create<AppState>()(
         }
       },
 
-      confirmAppointment: (appointmentId) => {
+      confirmAppointment: (appointmentId, consultationMeta) => {
         const appointment = get().appointments.find((a) => a.id === appointmentId);
         if (!appointment) return;
 
         set((state) => ({
           appointments: state.appointments.map((a) =>
             a.id === appointmentId
-              ? { ...a, status: 'confirmed', paymentStatus: 'paid', updatedAt: new Date() }
+              ? {
+                  ...a,
+                  status: 'confirmed',
+                  paymentStatus: 'paid',
+                  consultationChannel: consultationMeta?.consultationChannel ?? a.consultationChannel,
+                  consultationLink: consultationMeta?.consultationLink ?? a.consultationLink,
+                  consultationInstructions:
+                    consultationMeta?.consultationInstructions ?? a.consultationInstructions,
+                  updatedAt: new Date(),
+                }
               : a
           ),
           payments: state.payments.map((p) =>
@@ -291,7 +303,9 @@ export const useAppStore = create<AppState>()(
           userId: appointment.patientId,
           title: 'ချိန်းဆိုမှု အတည်ပြုပြီး',
           message:
-            'ငွေပေးချေမှု စစ်ဆေးပြီး ချိန်းဆိုမှုကို အတည်ပြုပြီးပါပြီ။ ချိန်းဆိုထားသော နေ့ရက်/အချိန်တွင် ဆွေးနွေးနိုင်ပါသည်။',
+            consultationMeta?.consultationLink
+              ? `ငွေပေးချေမှု စစ်ဆေးပြီး ချိန်းဆိုမှုကို အတည်ပြုပြီးပါပြီ။ ဆွေးနွေးရန် လင့်ခ်: ${consultationMeta.consultationLink}`
+              : 'ငွေပေးချေမှု စစ်ဆေးပြီး ချိန်းဆိုမှုကို အတည်ပြုပြီးပါပြီ။ ချိန်းဆိုထားသော နေ့ရက်/အချိန်တွင် ဆွေးနွေးနိုင်ပါသည်။',
           type: 'appointment',
           read: false,
         });

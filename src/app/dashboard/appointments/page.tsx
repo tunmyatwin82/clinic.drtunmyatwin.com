@@ -22,6 +22,16 @@ import { useLanguage } from '@/lib/LanguageContext';
 import { healthRecordLabel, isImageDataUrl } from '@/lib/booking-files';
 
 type ApptFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
+type ConsultationChannel = NonNullable<Appointment['consultationChannel']>;
+
+const consultationChannels: ConsultationChannel[] = [
+  'zoom',
+  'telegram',
+  'viber',
+  'messenger',
+  'phone',
+  'in-app',
+];
 
 function parseFilterParam(raw: string | null): ApptFilter {
   if (raw === 'pending' || raw === 'confirmed' || raw === 'completed' || raw === 'cancelled') {
@@ -50,6 +60,11 @@ export default function AppointmentsPage() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showHealthRecordsModal, setShowHealthRecordsModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmingAppointmentId, setConfirmingAppointmentId] = useState<string | null>(null);
+  const [confirmChannel, setConfirmChannel] = useState<ConsultationChannel>('zoom');
+  const [confirmLink, setConfirmLink] = useState('');
+  const [confirmInstructions, setConfirmInstructions] = useState('');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -81,6 +96,25 @@ export default function AppointmentsPage() {
         return t.booking.chatConsultation;
       default:
         return type;
+    }
+  };
+
+  const consultationChannelLabel = (channel: ConsultationChannel) => {
+    switch (channel) {
+      case 'zoom':
+        return 'Zoom';
+      case 'telegram':
+        return 'Telegram';
+      case 'viber':
+        return 'Viber';
+      case 'messenger':
+        return 'Messenger';
+      case 'phone':
+        return t.booking.audioConsultation;
+      case 'in-app':
+        return t.appointments.joinCall;
+      default:
+        return channel;
     }
   };
 
@@ -142,11 +176,29 @@ export default function AppointmentsPage() {
     setShowHealthRecordsModal(true);
   };
 
-  const handleConfirmAppointment = (appointmentId: string) => {
-    if (!window.confirm('ငွေပေးချေမှု မှန်ကန်ကြောင်း စစ်ဆေးပြီး ချိန်းဆိုမှုကို အတည်ပြုမလား?')) {
+  const handleConfirmAppointment = (appointment: Appointment) => {
+    setConfirmingAppointmentId(appointment.id);
+    setConfirmChannel(appointment.consultationChannel ?? 'zoom');
+    setConfirmLink(appointment.consultationLink ?? '');
+    setConfirmInstructions(appointment.consultationInstructions ?? '');
+    setShowConfirmModal(true);
+  };
+
+  const submitConfirmAppointment = () => {
+    if (!confirmingAppointmentId) return;
+    const trimmedLink = confirmLink.trim();
+    if (confirmChannel !== 'in-app' && !trimmedLink) {
+      alert('ဆွေးနွေးမှု link သို့မဟုတ် contact ကို ထည့်ပေးပါ။');
       return;
     }
-    confirmAppointment(appointmentId);
+
+    confirmAppointment(confirmingAppointmentId, {
+      consultationChannel: confirmChannel,
+      consultationLink: trimmedLink || undefined,
+      consultationInstructions: confirmInstructions.trim() || undefined,
+    });
+    setShowConfirmModal(false);
+    setConfirmingAppointmentId(null);
   };
 
   const handleRejectAppointment = (appointmentId: string) => {
@@ -281,6 +333,11 @@ export default function AppointmentsPage() {
                           {currentUser.role === 'patient' && appointment.status === 'confirmed' && (
                             <span className="text-xs text-emerald-300/90">{t.appointments.confirmedPatientHint}</span>
                           )}
+                          {appointment.consultationChannel && (
+                            <span className="text-xs text-slate-400">
+                              {t.appointments.consultationChannel}: {consultationChannelLabel(appointment.consultationChannel)}
+                            </span>
+                          )}
                           <span className="text-xs text-slate-400">
                             {appointment.paymentStatus === 'paid'
                               ? t.appointments.paymentPaid
@@ -310,19 +367,33 @@ export default function AppointmentsPage() {
                               {t.appointments.records}
                             </button>
                           )}
-                          {appointment.status === 'confirmed' && appointment.type === 'video' && (
+                          {appointment.status === 'confirmed' && appointment.consultationLink && (
+                            <a
+                              href={appointment.consultationLink}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn-primary py-1.5 px-3 text-sm"
+                            >
+                              {t.appointments.openConsultationLink}
+                            </a>
+                          )}
+                          {appointment.status === 'confirmed' &&
+                            appointment.type === 'video' &&
+                            (appointment.consultationChannel === 'in-app' ||
+                              !appointment.consultationChannel) &&
+                            !appointment.consultationLink && (
                             <button
                               onClick={() => router.push(`/consultation/${appointment.id}`)}
                               className="btn-primary py-1.5 px-3 text-sm"
                             >
                               {t.appointments.joinCall}
                             </button>
-                          )}
+                            )}
                           {canManageAppointments && appointment.status === 'pending' && (
                             <>
                               <button
                                 type="button"
-                                onClick={() => handleConfirmAppointment(appointment.id)}
+                                onClick={() => handleConfirmAppointment(appointment)}
                                 className="btn-success flex items-center gap-1 px-3 py-1.5 text-sm"
                               >
                                 <CheckCircle className="h-4 w-4" />
@@ -426,6 +497,71 @@ export default function AppointmentsPage() {
               ) : (
                 <p className="text-muted-foreground text-center py-8">{t.appointments.noHealthRecords}</p>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Appointment Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-xl rounded-2xl border border-border bg-card shadow-clinical">
+            <div className="flex items-center justify-between border-b border-border p-6">
+              <h3 className="text-xl font-bold text-foreground">{t.appointments.setConsultationDetails}</h3>
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="rounded-lg p-2 transition-colors hover:bg-muted"
+              >
+                <X className="h-5 w-5 text-muted-foreground" />
+              </button>
+            </div>
+            <div className="space-y-4 p-6">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-foreground">
+                  {t.appointments.consultationChannel}
+                </label>
+                <select
+                  value={confirmChannel}
+                  onChange={(e) => setConfirmChannel(e.target.value as ConsultationChannel)}
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-foreground"
+                >
+                  {consultationChannels.map((channel) => (
+                    <option key={channel} value={channel}>
+                      {consultationChannelLabel(channel)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-foreground">
+                  {t.appointments.consultationLink}
+                </label>
+                <input
+                  value={confirmLink}
+                  onChange={(e) => setConfirmLink(e.target.value)}
+                  placeholder="https://zoom.us/j/... / t.me/... / viber link / phone"
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-foreground"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-foreground">
+                  {t.appointments.consultationInstructions}
+                </label>
+                <textarea
+                  value={confirmInstructions}
+                  onChange={(e) => setConfirmInstructions(e.target.value)}
+                  rows={3}
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-foreground"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 border-t border-border p-6">
+              <button onClick={() => setShowConfirmModal(false)} className="btn-secondary px-4 py-2">
+                {t.appointments.cancel}
+              </button>
+              <button onClick={submitConfirmAppointment} className="btn-success px-4 py-2">
+                {t.appointments.saveAndConfirm}
+              </button>
             </div>
           </div>
         </div>

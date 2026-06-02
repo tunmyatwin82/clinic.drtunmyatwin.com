@@ -60,6 +60,9 @@ export interface Appointment {
   paymentMethod?: string;
   transactionId?: string;
   healthRecords?: string[];
+  consultationChannel?: 'zoom' | 'telegram' | 'viber' | 'messenger' | 'phone' | 'in-app';
+  consultationLink?: string;
+  consultationInstructions?: string;
   createdAt: Date;
   updatedAt: Date;
 }
